@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "REMOVEADBLOCK PRO - Adaptive Stealth Architecture",
+  "version": "14.9.5",
+  "description": "Hệ thống Proxy tàng hình, tự động tối ưu hóa và khôi phục luồng video mượt mà.",
+  "author": "Thái Thông",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ]
+}
