@@ -65,12 +65,16 @@ The heart of **RemoveAdblock Pro** is its intelligent multi-layered defense syst
 
 ---
 
-## 📬 CONTACT & SUPPORT
+## 🔧 CONTACT & SUPPORT
+- **Author:** Thái Thông
+- **Email:** [ThaiThongsj@gmail.com](mailto:ThaiThongsj@gmail.com)
 
-- **Author**: Thái Thông 
-- **Email**: ThaiThongsj@gmail.com
-- **Donation Account** (Vietcombank):  
-  `9898661918` — **NGUYỄN NGỌC THÁI THÔNG**
+### 💰 Support the Project
+
+![Bank Support](bank.png)
+
+**Vietcombank Account**  
+`9898661918` — **NGUYỄN NGỌC THÁI THÔNG**
 
 ---
 
