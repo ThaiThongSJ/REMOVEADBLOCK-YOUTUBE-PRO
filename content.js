@@ -28,7 +28,12 @@
             tp-yt-paper-dialog:has(ytd-enforcement-message-view-model),
             .yt-playability-error-supported-renderers,
             ytd-engagement-panel-title-header-renderer > #banner,
-            #ads-info-button.style-scope.ytd-engagement-panel-title-header-renderer {
+            #ads-info-button.style-scope.ytd-engagement-panel-title-header-renderer,
+            ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+            ytd-engagement-panel-section-list-renderer:has(panel-ad-header-image-lockup-view-model),
+            panel-ad-header-image-lockup-view-model,
+            ad-avatar-lockup-view-model,
+            ad-image-view-model.ytwAdImageViewModelHostIsClickableAdComponent {
                 display: none !important;
                 visibility: hidden !important;
                 opacity: 0 !important;

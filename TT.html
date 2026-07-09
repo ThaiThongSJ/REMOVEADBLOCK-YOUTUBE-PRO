@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REMOVEADBLOCK PRO - Control Panel</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+    <div class="app-header">
+        <div class="logo-area">
+            <div class="logo-text">REMOVEADBLOCK PRO</div>
+            <div class="status-badge"><span class="status-dot"></span> <span data-i18n="status">Stealth Engine Active</span></div>
+        </div>
+        <div class="header-right">
+            <button class="lang-btn" id="langToggleBtn">VN</button>
+            <div class="version">v14.9.5</div>
+        </div>
+    </div>
+
+    <div class="action-zone">
+        <button class="btn-reset" id="resetEngineBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            <span id="resetBtnText" data-i18n="resetBtn">Reset Engine</span>
+        </button>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title" data-i18n="titleFeatures">CORE FEATURES</div>
+        <ul>
+            <li data-i18n="f1">Completely blocks pre-roll, mid-roll, banners, and sponsored sidebar ads.</li>
+            <li data-i18n="f2">Eliminates "Continue watching" dialogs and adblock detection warnings.</li>
+            <li data-i18n="f3">Auto-forwards and safely skips ads instantly in milliseconds.</li>
+            <li data-i18n="f4">Filters physical interactions (Click, Space, K) to prevent emulation scanning.</li>
+        </ul>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title" data-i18n="titleAlgo">MULTI-LAYER ALGORITHM</div>
+        <div class="algo-box">Core Engine = (Stealth + Proxy) × Recovery</div>
+        <table>
+            <thead>
+                <tr>
+                    <th data-i18n="thMechanism">Mechanism</th>
+                    <th data-i18n="thDesc">Protection Layer Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Main World</strong></td><td data-i18n="t1">Injects core logic directly into the website context.</td></tr>
+                <tr><td><strong>JSON Proxy</strong></td><td data-i18n="t2">Manipulates real-time playerResponse data structures.</td></tr>
+                <tr><td><strong>Anti-Detection</strong></td><td data-i18n="t3">Bypasses the latest adblock scanning firewalls.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-grid">
+        <div class="panel author-box" style="margin-bottom:0;">
+            <div><span data-i18n="author">Author:</span> <strong>Thái Thông</strong></div>
+            <div style="color: var(--accent); font-size: 0.7rem; margin-top: 2px;">ThaiThongsj@gmail.com</div>
+        </div>
+        <div class="bank-box">
+            <div>
+                <div class="bank-label" data-i18n="donate">Project Maintenance (Vietcombank)</div>
+                <div class="bank-num">9898661918</div>
+            </div>
+            <span class="badge-name">THÔNG</span>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
