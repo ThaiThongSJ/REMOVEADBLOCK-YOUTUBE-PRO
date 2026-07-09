@@ -43,8 +43,11 @@
         style.textContent = css;
         (document.head || document.documentElement).appendChild(style);
     };
+    
+    // Thực thi ngay lập tức tại document-start
     injectCSS();
-    window.addEventListener('load', injectCSS);
+    // Dự phòng khi DOM sẵn sàng hoàn toàn
+    window.addEventListener('load', injectCSS, { once: true });
 
     // ==================== GIÁM SÁT THAO TÁC PHẦN CỨNG BẢO VỆ STREAM ====================
     const registerHardwareTracker = () => {
@@ -90,12 +93,12 @@
             }
         }
         
-        // 2. Học hỏi và tích hợp tinh túy: Triệt tiêu mọi ngóc ngách của cấu trúc Ads/Enforcement trong gói JSON
+        // 2. Triệt tiêu mọi ngóc ngách của cấu trúc Ads/Enforcement trong gói JSON
         if (obj.adPlacements) obj.adPlacements = [];
         if (obj.playerAds) delete obj.playerAds;
         if (obj.playerConfig) delete obj.playerConfig;
         
-        // Xóa bảng chặn nằm sâu trong cấu trúc UI phụ trợ (Học hỏi từ RemoveAdblockThing)
+        // Xóa bảng chặn nằm sâu trong cấu trúc UI phụ trợ
         if (obj.auxiliaryUi && obj.auxiliaryUi.messageRenderers && obj.auxiliaryUi.messageRenderers.enforcementMessageViewModel) {
             delete obj.auxiliaryUi.messageRenderers.enforcementMessageViewModel;
             console.log("[Jungle Proxy] Đã triệt tiêu tận gốc auxiliary Enforcement JSON!");
@@ -144,7 +147,7 @@
     setTimeout(() => clearInterval(configInterval), 5000);
 
     // ==================== STEALTH REPORTING INTERCEPTOR ====================
-    const TRACKING_KEYWORDS = /ptracking|ad_status|conversion|bat.bing|pagead|activeview|stats\/ads/;
+    const TRACKING_KEYWORDS = /ptracking|ad_status|conversion|bat\.bing|pagead|activeview|stats\/ads/;
     const nativeOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function(method, url) {
         const u = (url || '').toLowerCase();
@@ -201,7 +204,8 @@
     // CLEANER STORAGE
     const cleanEnforcementStorage = () => {
         try {
-            for (let i = 0; i < localStorage.length; i++) {
+            const len = localStorage.length;
+            for (let i = len - 1; i >= 0; i--) {
                 const key = localStorage.key(i);
                 if (key && (key.includes('yt-player-enforcement') || key.includes('adblock') || key.includes('yt-ad'))) {
                     localStorage.removeItem(key);
