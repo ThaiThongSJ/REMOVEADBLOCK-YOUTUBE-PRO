@@ -1,6 +1,7 @@
 {
   "manifest_version": 3,
   "name": "REMOVEADBLOCK PRO - Adaptive Stealth Architecture",
+  "short_name": "RemoveAdblock Pro",
   "version": "14.9.5",
   "description": "Hệ thống Proxy tàng hình, tự động tối ưu hóa và khôi phục luồng video mượt mà.",
   "author": "Thái Thông",
@@ -10,29 +11,49 @@
     "128": "icon128.png"
   },
   "action": {
-    "default_popup": "TT.html",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",
       "128": "icon128.png"
-    }
-  },
-  "background": {
-    "service_worker": "background.js"
+    },
+    "default_popup": "TT.html"
   },
   "permissions": [
     "storage",
-    "alarms"
+    "alarms",
+    "tabs"
   ],
+  "host_permissions": [
+    "*://*/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": [
-        "*://www.youtube.com/*",
-        "*://m.youtube.com/*"
+        "*://*.youtube.com/*",
+        "*://*.m.youtube.com/*"
       ],
       "js": ["content.js"],
       "run_at": "document_start",
       "all_frames": true
     }
-  ]
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "TT.html",
+        "popup.css",
+        "popup.js",
+        "icon16.png",
+        "icon48.png",
+        "icon128.png"
+      ],
+      "matches": ["*://*/*"]
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://raw.githubusercontent.com https://cdn.jsdelivr.net https://api.github.com;"
+  }
 }
