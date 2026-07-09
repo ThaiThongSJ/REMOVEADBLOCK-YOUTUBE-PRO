@@ -15,7 +15,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 // Sử dụng link CDN mạng lưới jsDelivr nhằm tối ưu tốc độ và giảm tải trực tiếp cho GitHub
-const VERSION_CHECK_URL = "https://raw.githubusercontent.com/ThaiThongSJ/REMOVEADBLOCK-YOUTUBE-PRO/refs/heads/main/version.json";
+const VERSION_CHECK_URL = "https://cdn.jsdelivr.net/gh/ThaiThongSJ/REMOVEADBLOCK-YOUTUBE-PRO@main/version.json";
 const CURRENT_VERSION = chrome.runtime.getManifest().version;
 
 // Cấu hình chống spam request: 6 tiếng mới cho phép fetch 1 lần (6 * 60 * 60 * 1000)
