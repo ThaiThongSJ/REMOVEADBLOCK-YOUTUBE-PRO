@@ -42,8 +42,9 @@ const i18n = {
 };
 
 let currentLang = 'en';
-let githubDownloadUrl = "https://github.com/ThaiThongSJ/Pitch-Shifter-Daimon"; // Link dự phòng mặc định
+let githubDownloadUrl = "https://github.com/ThaiThongSJ/Pitch-Shifter-Daimon"; 
 let hasNewVersion = false;
+let latestVersion = ""; // Biến lưu số phiên bản mới phục vụ khóa lặp
 
 function applyLanguage(lang) {
     currentLang = lang;
@@ -52,34 +53,31 @@ function applyLanguage(lang) {
         if (i18n[lang][key]) el.textContent = i18n[lang][key];
     });
     
-    // Nếu có bản cập nhật, đè văn bản phấn khích lên nút
     if (hasNewVersion) {
         document.getElementById('resetBtnText').textContent = i18n[lang].updateAvailable;
+    } else {
+        document.getElementById('resetBtnText').textContent = i18n[lang].resetBtn;
     }
 
     document.getElementById('langToggleBtn').textContent = lang === 'en' ? 'VN' : 'EN';
 }
 
-// Kiểm tra ngôn ngữ và trạng thái cập nhật từ bộ nhớ đệm
 if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     chrome.storage.local.get(['appLanguage', 'updateInfo'], (result) => {
-        // 1. Kiểm tra cập nhật trước
         if (result.updateInfo && result.updateInfo.latest_version) {
             const currentVersion = chrome.runtime.getManifest().version;
-            // Nếu phiên bản trên CDN khác bản hiện tại, bật chế độ "nhảy nhảy"
             if (result.updateInfo.latest_version !== currentVersion) {
                 hasNewVersion = true;
+                latestVersion = result.updateInfo.latest_version; // Gán phiên bản đích
                 const btn = document.getElementById('resetEngineBtn');
-                btn.classList.add('has-update'); // Kích hoạt CSS rung lắc
+                btn.classList.add('has-update'); 
                 
-                // Lấy link Github từ JSON của bạn (nếu có cấu hình trường download_url trong file version.json)
                 if (result.updateInfo.download_url) {
                     githubDownloadUrl = result.updateInfo.download_url;
                 }
             }
         }
 
-        // 2. Áp dụng ngôn ngữ
         if (result.appLanguage) applyLanguage(result.appLanguage);
         else applyLanguage('en');
     });
@@ -87,7 +85,6 @@ if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
     applyLanguage('en');
 }
 
-// Bắt sự kiện chuyển ngôn ngữ
 document.getElementById('langToggleBtn').addEventListener('click', () => {
     const nextLang = currentLang === 'en' ? 'vi' : 'en';
     applyLanguage(nextLang);
@@ -96,20 +93,28 @@ document.getElementById('langToggleBtn').addEventListener('click', () => {
     }
 });
 
-// Xử lý nút kích hoạt (Reset hoặc Tải cập nhật tùy trạng thái)
 document.getElementById('resetEngineBtn').addEventListener('click', function() {
     const btn = this;
     const textSpan = document.getElementById('resetBtnText');
 
     if (hasNewVersion) {
-        // TRƯỜNG HỢP 1: Có bản cập nhật -> Mở link Github của bạn để tải bản mới
         if (typeof chrome !== 'undefined' && chrome.tabs) {
             chrome.tabs.create({ url: githubDownloadUrl });
         } else {
             window.open(githubDownloadUrl, '_blank');
         }
+
+        // NÂNG CẤP: Truyền kèm thông tin số phiên bản để khóa không cho nhảy lại bản này
+        if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            chrome.runtime.sendMessage({ action: "clearUpdateBadge", version: latestVersion }, (response) => {
+                hasNewVersion = false;
+                btn.classList.remove('has-update');
+                textSpan.textContent = i18n[currentLang].resetBtn; 
+                btn.style.background = ""; 
+                btn.style.boxShadow = "";
+            });
+        }
     } else {
-        // TRƯỜNG HỢP 2: Không có cập nhật -> Làm nhiệm vụ Reset lõi như cũ
         btn.classList.add('loading');
         textSpan.textContent = i18n[currentLang].resetLoading;
         
