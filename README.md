@@ -1,98 +1,98 @@
 # 🛡️ **Jungle Diamond 14.9.12**  
-**Advanced YouTube Ad Blocker with Self-Healing & Biometric Stealth**
+**Advanced YouTube Ad Blocker with Self-Healing Intelligence**
 
 ![Version](https://img.shields.io/badge/Version-14.9.12-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-YouTube-red?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-> **"The most intelligent and adaptive YouTube ad blocker on the planet."**
-
----
-
-## ✨ **Overview**
-
-**Jungle Diamond** is a next-generation **YouTube Ad Blocker** built as a lightweight, high-performance **Userscript**. It combines **multi-layer stealth technology**, **self-healing recovery**, and **behavioral entropy simulation** to deliver a completely clean, uninterrupted viewing experience.
-
-Unlike traditional ad blockers that rely on static filters, Jungle Diamond **adapts in real-time** to YouTube’s evolving anti-adblock systems (including Honey Badger enforcement and server-side throttling).
+> **Next-generation YouTube Ad Blocker** featuring **Self-Healing Anti-Throttle**, **Biometric Entropy**, and **Persistent Fingerprint Shielding**.
 
 ---
 
-## 🚀 **Key Features**
-
-- **Ultra Flash Skip** – Mutes and skips ads in **0ms** with biometric jitter
-- **Self-Healing Engine** – Automatically detects and counters YouTube throttling, stalled streams, and playback manipulation
-- **Persistent Fingerprint Shield** – Defeats canvas, audio, WebGL, and hardware fingerprinting with session-consistent noise
-- **Behavioral Entropy** – Simulates natural human interactions (mouse, scroll, keyboard) to evade bot detection
-- **SPA Lifecycle Management** – Perfectly handles YouTube’s Single Page Application navigation
-- **Memory Leak Shield** – Advanced observer registry and adaptive throttling for long sessions (Lo-Fi, playlists)
-- **Zero Lag** – Lightweight architecture optimized for performance
+### 🎥 **Demo on YouTube**
+[![Watch Demo](https://img.shields.io/badge/Watch_Demo_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=PGSILkWrKjU)
 
 ---
 
-## 🧠 **Core Technologies**
+## ✨ **Core Features**
 
-| Layer | Technology | Purpose |
-|------|----------|--------|
-| **Stealth** | Multi-layer `ytcfg` Proxy + JSON Manipulation | Prevents Honey Badger detection |
-| **Recovery** | Self-Healing Core + Stall Detection | Counters throttling and black screens |
-| **Fingerprinting** | Persistent Session Seed + Audio/WebGL Noise | Defeats statistical fingerprinting |
-| **Behavioral** | Biometric Jitter + Keyboard Entropy | Mimics real human behavior |
-| **Memory** | Central Registry + AbortController | Prevents memory leaks in SPA |
-
----
-
-## 📥 **Installation**
-
-1. Install **Tampermonkey** or **Violentmonkey** extension
-2. Click the **Raw** button on this file → Install
-3. Refresh YouTube — **Jungle Diamond activates automatically**
-
-**No configuration needed.** Works instantly on both desktop and mobile YouTube.
+- **Ultra Flash Skip** — Instantly mutes and skips ads with realistic biometric reaction delay
+- **Self-Healing Engine** — Automatically detects and counters YouTube’s throttling, stalled streams, and forced playback manipulation
+- **Persistent Fingerprint Shield** — Defeats Canvas, AudioContext, WebGL, and hardware fingerprinting with session-consistent noise
+- **Behavioral Entropy System** — Simulates natural human interactions (mouse movement, scroll, keyboard)
+- **Memory Leak Protection** — Advanced lifecycle management using AbortController and Central Registry
+- **SPA Optimization** — Perfect handling of YouTube’s Single Page Application navigation
+- **Hardware Interaction Protection** — Distinguishes real user actions from automated detection
+- **High Performance** — Extremely lightweight with adaptive CPU throttling
 
 ---
 
-## 🔬 **Technical Architecture**
+## 🧠 **Multi-Layer Algorithm**
 
-- **@run-at document-start** – Injects before YouTube loads
-- **Main World Injection** – Direct access to YouTube’s internal objects
-- **Session-Persistent Entropy** – Consistent fingerprinting across refreshes
-- **Adaptive Throttling** – Reduces CPU usage when tab is hidden
-- **Real-time Recovery** – Monitors playback rate and stall conditions
+The core of **Jungle Diamond** is built on an intelligent, adaptive defense architecture:
 
----
+**Core Engine = (Persistent Fingerprint Shield + JSON Proxy) × Self-Healing Recovery × Biometric Entropy**
 
-## 📊 **Performance**
+### Technology Layers:
 
-- **Memory Usage**: Extremely low (< 15MB after 8 hours)
-- **CPU Impact**: Negligible (adaptive throttling when idle)
-- **Compatibility**: Chrome, Edge, Firefox, Brave (Tampermonkey/Violentmonkey)
-
----
-
-## 🛡️ **Anti-Detection**
-
-- **Behavioral Entropy** – Random mouse movements, scrolls, and keyboard events
-- **Biometric Jitter** – Realistic reaction delays when skipping ads
-- **Hardware Consistency** – Persistent spoofing across session
-- **Network Stealth** – Blocks all tracking and reporting requests
+- **Persistent Session Seed** — Consistent fingerprint spoofing across page refreshes
+- **Biometric Jitter Arc** — Realistic human reaction timing for ad skipping
+- **Self-Healing Core** — Real-time detection and recovery from throttling & stalls
+- **Central Lifecycle Registry** — Advanced memory management with AbortController
+- **Behavioral Entropy Engine** — Mouse, scroll, and keyboard simulation
+- **Stealth CSS + DOM Observer** — Visually eliminates all ad elements
+- **Network Interceptor** — Blocks tracking and reporting requests
 
 ---
 
-## 📬 **Contact & Support**
+## 🎯 **Key Protection Mechanisms**
 
-- **Author**: Thai Thong + Vietnamese Community + Gemini
-- **GitHub**: [https://github.com/](https://github.com/)
-- **Email**: ThaiThongsj@gmail.com
+| Layer | Mechanism | Description |
+|-------|---------|-----------|
+| 1 | **Persistent Fingerprint Shield** | Canvas, Audio, WebGL & Hardware spoofing with session seed |
+| 2 | **Self-Healing Anti-Throttle** | Detects and counters playback manipulation & stalled streams |
+| 3 | **Biometric Jitter** | Realistic reaction delays when skipping ads |
+| 4 | **Behavioral Entropy** | Natural mouse, scroll & keyboard interactions |
+| 5 | **Memory Shield** | Central Registry + AbortController for long sessions |
+| 6 | **JSON Proxy** | Deep real-time manipulation of `playerResponse` |
 
 ---
 
-## ⭐ **Support the Project**
+## 📥 **Installation Guide**
 
-If you find **Jungle Diamond** useful, please consider starring the repository or donating to support continued development.
+1. Install **Tampermonkey** or **Violentmonkey** in your browser
+2. Click the **Raw** button on the script file
+3. Confirm installation in the userscript manager
+4. Refresh any YouTube page — **Jungle Diamond activates automatically**
 
-**Made with ❤️ for a cleaner, ad-free YouTube experience.**
+**No configuration required.** Works on both desktop and mobile YouTube.
+
+---
+
+## ⚙️ **Development & Architecture**
+
+- **Language**: Pure JavaScript (Userscript)
+- **Injection**: `@run-at document-start`
+- **Core Technologies**: Proxy, MutationObserver, AbortController, Session Storage, Performance API
+- **Design Philosophy**: Maximum stealth + self-adaptation with minimal performance impact
+
+---
+
+## 🔧 **Contact & Support**
+
+- **Author**: Thai Thong + Vietnamese Community
+- **Email**: [ThaiThongsj@gmail.com](mailto:ThaiThongsj@gmail.com)
+
+### 💰 **Support the Project**
+
+![Bank Support](bank.png)
+
+**Vietcombank Account**  
+`9898661918` — **NGUYỄN NGỌC THÁI THÔNG**
 
 ---
 
 **Thank you for using Jungle Diamond!**  
-*Enjoy YouTube the way it was meant to be — clean, fast, and uninterrupted.*
+Enjoy YouTube without interruptions. ✨
+
+**Made with ❤️ for a better viewing experience**
