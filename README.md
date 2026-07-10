@@ -76,7 +76,7 @@ If you prefer running the logic via a standard script manager without installing
 
 1. **Install Manager**: Add a script manager extension like **Tampermonkey** or **Violentmonkey** from your browser's store.
 2. **Inject New Core**: Open the manager dashboard and select **"Create a new script"**.
-3. **Paste Source**: Replace all default template code with the raw JavaScript engine of `Jungle Diamond 14.9.16`.
+3. **Paste Source**: Replace all default template code with the raw JavaScript engine of `Jungle Diamond 14.9.16` (content.js) .
 4. **Commit Changes**: Press `Ctrl + S` (or `Cmd + S`) to save. The ruleset will automatically execute at `document-start` on any YouTube frame.
 
 ---
