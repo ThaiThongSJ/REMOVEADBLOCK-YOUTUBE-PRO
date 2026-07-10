@@ -1,10 +1,10 @@
-# 🛡️ **REMOVEADBLOCK PRO** **YouTube Ad Blocker - Version 14.9.12**
-![Version](https://img.shields.io/badge/Version-14.9.12-blue?style=for-the-badge)
+# 🛡️ **REMOVEADBLOCK PRO** **YouTube Ad Blocker - Version 14.9.16**
+![Version](https://img.shields.io/badge/Version-14.9.16-blue?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-YouTube-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
 ![App](bg.jpg)
-> Advanced YouTube Ad Blocker equipped with **Anti-Throttle Self-Healing Systems**, **Biometric Entropy Engines**, and **Persistent Fingerprint Safeguards**.
+> Advanced YouTube Ad Blocker equipped with **Anti-Throttle Self-Healing Systems**, **Biometric Entropy Engines**, and **Session-Locked Persistent Fingerprint Safeguards**.
 
 ---
 
@@ -15,29 +15,28 @@
 
 ## ✨ CORE FEATURES
 ---
-- **Complete Ad Elimination**: Instantly strips out pre-roll, mid-roll, layout overlays, home banners, and sponsored sidebar components.
-- **Anti-Throttle Self-Healing Engine**: Actively intercepts YouTube's background sabotage attempts, detecting hidden `playbackRate` reductions (0.1x) and forcing timeline micro-shifs (+0.1s) to permanently dissolve stream freezing (stalls).
-- **Biometric Jitter Arc**: Eliminates "instant millisecond clicking" red-flags by emulating a biological human retinal reflex delay (260ms - 450ms) based on a randomized session seed when skipping ads.
-- **Behavioral & Keyboard Entropy**: Periodically dispatches microscopic background interactions, such as smooth scrolling simulation and harmless virtual keyboard signaling (`ShiftLeft`), bypassing YouTube's tracking mechanics for hidden or inactive background tabs.
-- **Persistent Fingerprint Spoofing**: Masks hardware profile vulnerabilities by dynamically randomize-offsetting `AudioContext` channel benchmarks, device hardware concurrency thresholds, canvas image buffers, and structural GPU extensions (`WebGL`).
-- **RAM Safeguard & Automatic Lifecycle Nuke**: Mitigates background performance degradation with an internal tracking registry (`CoreRegistry`) that dynamically monitors memory heaps and purges detached observers/intervals to enable seamless multi-hour Lo-Fi streaming.
-- **Enforcement Destruction**: Dissolves "Continue Watching", "Ad blocker detected" pop-up grids, and modern script firewalls without disrupting the player.
+- **Complete Ad Elimination**: Instantly strips out pre-roll, mid-roll, layout overlays, home banners, sponsored sidebar components, and modern standalone `adBreakServiceConfig` arrays.
+- **Anti-Throttle Self-Healing Engine**: Actively intercepts YouTube's background sabotage attempts, monitoring video states every 1000ms. If a stream freeze or buffering stall is detected (>2500ms), it automatically triggers timeline micro-shifts (`currentTime += 0.1`) to seamlessly force-resume playback.
+- **Session-Locked Persistent Fingerprint Safeguards**: Initializes a unified `JD_SESSION_SEED` per tab session to lock device profiles. It spoofs hardware indicators (`hardwareConcurrency`, `deviceMemory`), injects mathematical noise into `AudioBuffer.prototype.getChannelData`, manipulates Canvas `getImageData` pixel buffers, and rotates structured GPU profiles from a high-tier WebGL renderer pool.
+- **Biometric Entropy Engine**: Generates organic user activity metrics by periodically dispatching randomized mouse movement events (`mousemove`) across the native `movie_player` coordinates.
+- **Context-Aware Behavior Tracking**: Utilizes an advanced `IntersectionObserver` array to detect when the user view intersects with the `#comments` section, triggering micro-scrolling vectors to dynamically bypass automated static bot tracking heuristics.
+- **Anti-Honey Badger & Control Flow Interceptor**: Proxies `window.ytcfg.set` on-the-fly to purge backend telemetry experiment configurations, cleanly disabling `control_flow_enforcement` and forcing `disable_adblock_detection` to true.
+- **Enforcement & Storage Destruction**: Permanently flushes tracking identifiers from `localStorage` (`yt-player-enforcement`, `adblock`, etc.) and dissolves "Continue Watching" or anti-adblock pop-up grids via a highly reactive 50ms debounced `MutationObserver`.
 
 ---
 
 ## 🧠 MULTI-LAYER ALGORITHM
 
-The heart of **RemoveAdblock Pro** is its intelligent multi-layered defensive matrix:
+The heart of **RemoveAdblock Pro 14.9.16** is its intelligent multi-layered defensive matrix:
 
-**Core Engine = (Stealth Injection + JSON Proxy) × Self-Healing Core × Behavioral Entropy**
+**Core Engine = (Stealth Context Injection + JSON/ytcfg Proxy) × Self-Healing Core × Biometric Entropy**
 
 ### Technology Layers:
 
-- **Main World Context Injection**: Injects defensive operational logic directly into the native website sandbox, circumventing traditional browser content-script limits.
-- **Data Manipulation Proxies**: Deep real-time structural interceptor built atop native `JSON.parse` and custom `ytcfg` proxies to purge incoming `adPlacements` and `playerAds` configurations.
-- **Self-Healing State Monitor**: Continuously polling core video elements every 1000ms to override network playback rates and safely force `.play()` parameters.
-- **Central Memory Lifecycle Registry**: Centralized orchestration bucket controlling `Set()` mappings of loops, timeouts, and mutation trackers, ensuring strict resource safety.
-- **Visual Camouflage Array**: Highly optimized, reactive CSS enforcement utilizing hardware-accelerated viewport manipulation to structurally hide tracking DOM trees.
+- **Data Manipulation Proxies**: Deep real-time structural interceptor built atop native `JSON.parse` and global `window.ytplayer.config` Proxies to bypass structural telemetry before rendering.
+- **Self-Healing State Monitor**: Continuous multi-event polling (`play`, `ratechange`, `playing`) that safely forces `.play()` parameters and overrides background speed restrictions.
+- **Visual Camouflage Array**: Highly optimized, reactive CSS injection utilizing hardware-accelerated viewport manipulation to completely collapse tracking DOM trees.
+- **Network Request Interceptor**: High-performance hooks over native `XMLHttpRequest` and `fetch` APIs, automatically re-routing tracking payloads (`ptracking`, `pagead`, `activeview`) into background beacons while mocking a `200 OK` response to the client.
 
 ---
 
@@ -45,30 +44,31 @@ The heart of **RemoveAdblock Pro** is its intelligent multi-layered defensive ma
 
 | Layer | Mechanism Name              | Technical Description |
 |-------|-----------------------------|-----------|
-| 1     | **Persistent Shielding** | Obfuscates hardware indicators (`navigator`), WebGL vendors, and Canvas fingerprints using a persistent session seed. |
-| 2     | **JSON & Config Proxy** | Manipulates structural data nodes on the fly to bypass Honey Badger experiment deployments. |
-| 3     | **Biometric Skip Arc** | Mimics organic reaction curves to bypass automated bot skip tracking heuristics. |
-| 4     | **Self-Healing Core** | Actively rectifies video freezes and counters background speed throttling in less than 2.5 seconds. |
-| 5     | **Behavioral Entropy** | Blurs tracking metrics by injecting simulated user context on background inactive tabs. |
-| 6     | **Automated Lifecycle** | Triggers strict garbage collection and registry resets if JS heap memory exceeds 350MB. |
+| 1     | **Persistent Fingerprinting** | Obfuscates hardware profiles, AudioContext benchmarks, WebGL vendors, and Canvas fingerprints based on a consistent session seed. |
+| 2     | **ytcfg & Config Proxy** | Intercepts and manipulates global configuration endpoints to instantly drop Honey Badger security experiments. |
+| 3     | **Biometric Entropy Array** | Simulates dynamic hardware actions (organic cursor coordinates) to pass anti-bot behavioral tests. |
+| 4     | **Self-Healing Core** | Actively rectifies background video freezes and network throttling vectors in less than 2.5 seconds without reloading. |
+| 5     | **Network Masking Hook** | Silently absorbs analytical ad-status logs, responding with a mocked positive state to keep the video stream flowing. |
+| 6     | **Automated Storage Purge** | Continuously neutralizes tracking tokens and warning logs hidden inside the local storage cache. |
 
 ---
 
 ## 📥 INSTALLATION GUIDE
 
-1. Download the extension source code (folder or zip extraction).
-2. Open your chromium-based browser (**Chrome / Edge / Brave**).
-3. Navigate to the extension manager (`chrome://extensions/` or `edge://extensions/`).
-4. Toggle **Developer Mode** (top-right switch).
-5. Click **"Load unpacked"** in the top-left section and select the root directory containing the extension files.
-6. Done! The extension activates immediately and is ready to secure your stream.
+Since Version 14.9.16 is architected as an elite UserScript, you can deploy it using any standard script manager:
+
+1. Install a user script manager extension such as **Tampermonkey**, **Violentmonkey**, or **Greasemonkey** from your browser's extension store.
+2. Open the script manager dashboard and click **"Create a new script"**.
+3. Copy the entire source code of `Jungle Diamond 14.9.16`.
+4. Paste it into the editor, replacing any default template, and press `Ctrl + S` (or `Cmd + S`) to save.
+5. Navigate to **YouTube**, the script will automatically initialize at `document-start` and secure your stream!
 
 ---
 
 ## ⚙️ DEVELOPMENT & ARCHITECTURE
 
 - **Language Architecture**: Pure Vanilla ES6+ JavaScript optimized for low latency and zero framework dependency.
-- **Core Native API Hooks**: Custom Proxies, `MutationObserver` mutations, `IntersectionObserver` comment viewport detection, HTML5 Video Event Listeners (`ratechange`, `playing`).
+- **Core Native API Hooks**: Custom Object Proxies, `MutationObserver` layout listeners, `IntersectionObserver` viewport comment detection, and HTML5 Media Events.
 - **Engineering Objective**: Deliver an invisible, performant, and **completely uninterrupted** viewing workflow over multi-hour operational cycles.
 
 ---
