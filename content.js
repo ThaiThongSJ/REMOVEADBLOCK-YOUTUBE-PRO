@@ -13,7 +13,7 @@
 (function() {
     'use strict';
 
-    // ==================== [BỔ SUNG 2026] KHỞI TẠO BIẾN TOÀN CỤC & SEED PHIÊN NHẤT QUÁN ====================
+    // ==================== KHỞI TẠO BIẾN TOÀN CỤC & SEED PHIÊN NHẤT QUÁN ====================
     if (!sessionStorage.getItem('JD_SESSION_SEED')) {
         sessionStorage.setItem('JD_SESSION_SEED', Math.random().toString());
     }
@@ -34,15 +34,16 @@
     let lastVideoPosition = 0;
     let currentCommentObserver = null;
 
-    // ==================== CÁC BIẾN KHỞI TẠO GỐC (GIỮ NGUYÊN 100%) ====================
+    // ==================== CÁC BIẾN KHỞI TẠO GỐC (GIỮ NGUYÊN BẢO TOÀN) ====================
     let lastPhysicalInteraction = 0;
     let isUserIntentionallyPaused = false;
     const INTERACTION_WINDOW = 2000;
 
-    // [TỐI ƯU SIÊU NHẸ] Biến kiểm soát chu kỳ dọn dẹp bộ cứng tránh nghẽn CPU
+    // Biến kiểm soát chu kỳ dọn dẹp tài nguyên thông minh
     let lastStorageCleanTime = 0;
+    let lastBiometricTime = 0;
 
-    // ==================== ANTI-BANNER & ENFORCEMENT CSS (GIỮ NGUYÊN 100%) ====================
+    // ==================== ANTI-BANNER & ENFORCEMENT CSS ====================
     const injectCSS = () => {
       const css = `
             square-image-layout-view-model, ad-image-view-model,
@@ -79,7 +80,7 @@
       once: true
     });
 
-    // ==================== GIÁM SÁT THAO TÁC PHẦN CỨNG BẢO VỆ STREAM (GIỮ NGUYÊN 100%) ====================
+    // ==================== GIÁM SÁT THAO TÁC PHẦN CỨNG BẢO VỆ STREAM ====================
     const registerHardwareTracker = () => {
       window.addEventListener('click', (e) => {
         if (e.isTrusted) {
@@ -109,7 +110,7 @@
     };
     registerHardwareTracker();
 
-    // ==================== [BỔ SUNG 2026] FINGERPRINT SHIELD NHẤT QUÁN THEO PHIÊN ĐỘC LẬP ====================
+    // ==================== FINGERPRINT SHIELD NHẤT QUÁN THEO PHIÊN ====================
     const advancedShieldFingerprinting = () => {
         try {
             const originalHardwareConcurrency = navigator.hardwareConcurrency;
@@ -151,18 +152,16 @@
     };
     advancedShieldFingerprinting();
 
-    // ==================== NÂNG CẤP A: THAO TÚNG DỮ LIỆU BÓC LỘT SÂU TÀNG HÌNH (GIỮ NGUYÊN 100%) ====================
+    // ==================== THAO TÚNG DỮ LIỆU BÓC LỘT SÂU TÀNG HÌNH ====================
     const manipulatePlayerResponse = (obj) => {
       if (!obj) return;
 
-      // 1. Phá vỡ cấu trúc Enforcement và lấp đầy khoảng trống dữ liệu để tránh treo stream
       if (obj.playabilityStatus) {
         if (obj.playabilityStatus.status === "UNPLAYABLE" || obj.playabilityStatus.errorScreen || obj.playabilityStatus.status === "LOGIN_REQUIRED" || obj.playabilityStatus.messages) {
           obj.playabilityStatus.status = "OK";
           delete obj.playabilityStatus.errorScreen;
           delete obj.playabilityStatus.messages;
 
-          // Đảm bảo trình phát không đứng im bằng cách mở khóa chế độ nhúng luồng ngầm
           if (!obj.playabilityStatus.playableInEmbed) {
             obj.playabilityStatus.playableInEmbed = true;
           }
@@ -170,23 +169,19 @@
         }
       }
 
-      // 2. Triệt tiêu mọi ngóc ngách quảng cáo trong gói dữ liệu JSON
       if (obj.adPlacements) obj.adPlacements = [];
       if (obj.playerAds) delete obj.playerAds;
       if (obj.playerConfig) delete obj.playerConfig;
 
-      // Loại bỏ phân đoạn luồng chứa mã mồi điều hướng quảng cáo ngầm ẩn để chống khựng video
       if (obj.streamingData && obj.streamingData.adaptiveFormats) {
         obj.streamingData.adaptiveFormats = obj.streamingData.adaptiveFormats.filter(fmt => !fmt.signatureCipher);
       }
 
-      // Xóa bảng chặn nằm sâu trong cấu trúc UI phụ trợ
       if (obj.auxiliaryUi && obj.auxiliaryUi.messageRenderers && obj.auxiliaryUi.messageRenderers.enforcementMessageViewModel) {
         delete obj.auxiliaryUi.messageRenderers.enforcementMessageViewModel;
         console.log("[Jungle Proxy] Đã triệt tiêu tận gốc auxiliary Enforcement JSON!");
       }
 
-      // [BỔ SUNG 2026 KHÔNG XUNG ĐỘT]: Xóa bỏ cụm adBreak độc lập mới của YT
       if (obj.adBreakServiceConfig) delete obj.adBreakServiceConfig;
 
       if (obj.playerResponse) manipulatePlayerResponse(obj.playerResponse);
@@ -201,7 +196,7 @@
       };
     } catch (e) {}
 
-    // ==================== PROXY YTPLAYER GLOBAL CONFIG (GIỮ NGUYÊN 100%) ====================
+    // ==================== PROXY YTPLAYER GLOBAL CONFIG ====================
     const proxyPlayerConfig = () => {
       if (window.ytplayer && window.ytplayer.config) {
         let currentConfig = window.ytplayer.config;
@@ -234,7 +229,7 @@
     }, 10);
     setTimeout(() => clearInterval(configInterval), 5000);
 
-    // ==================== [BỔ SUNG 2026] ĐÁNH CHẶN YTCFG CHỐNG HONEY BADGER QUÉT NGẦM ====================
+    // ==================== ĐÁNH CHẶN YTCFG CHỐNG HONEY BADGER QUÉT NGẦM ====================
     const interceptYtcfg = () => {
         const sanitizeConfig = (obj) => {
             if (obj && typeof obj === 'object') {
@@ -256,7 +251,7 @@
     };
     interceptYtcfg();
 
-    // ==================== STEALTH REPORTING INTERCEPTOR (GIỮ NGUYÊN 100%) ====================
+    // ==================== STEALTH REPORTING INTERCEPTOR ====================
     const TRACKING_KEYWORDS = /ptracking|ad_status|conversion|bat\.bing|pagead|activeview|stats\/ads/;
     const nativeOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function(method, url) {
@@ -264,18 +259,10 @@
       if (TRACKING_KEYWORDS.test(u)) {
         if (navigator.sendBeacon) navigator.sendBeacon(url);
         Object.defineProperties(this, {
-          status: {
-            value: 200
-          },
-          statusText: {
-            value: 'OK'
-          },
-          readyState: {
-            value: 4
-          },
-          responseText: {
-            value: '{}'
-          }
+          status: { value: 200 },
+          statusText: { value: 'OK' },
+          readyState: { value: 4 },
+          responseText: { value: '{}' }
         });
         this.send = function() {
           setTimeout(() => {
@@ -301,7 +288,7 @@
       return nativeFetch.apply(this, arguments);
     };
 
-    // ==================== TUA GIA TỐC NGẦM ĐỘT PHÁ (GIỮ NGUYÊN 100%) ====================
+    // ==================== TUA GIA TỐC NGẦM ĐỘT PHÁ ====================
     const executeVirtualAcceleration = (video) => {
       if (!video) return;
       const isAdShowing = document.querySelector('.ad-showing, .ad-interrupting, .ytp-ad-player-overlay');
@@ -324,11 +311,11 @@
       });
     };
 
-    // CLEANER STORAGE (TỐI ƯU THUẬT TOÁN ĐIỀU TỐC THÔNG MINH - NHẸ MÁY 1500%)
+    // CLEANER STORAGE (ĐIỀU TỐC THÔNG MINH - THỜI GIAN THROTTLE NỚI RỘNG LÊN 25 GIÂY)
     const cleanEnforcementStorage = () => {
       const now = Date.now();
-      // Thuật toán giới hạn chu kỳ: Chỉ thực sự can thiệp đĩa cứng sau mỗi 15 giây thay vì ép CPU cày ải mỗi giây.
-      if (now - lastStorageCleanTime < 15000) return;
+      // ĐIỂM 3: Tăng chu kỳ dọn dẹp bộ nhớ lên 25 giây để giảm tải hoàn toàn nghẽn I/O main-thread
+      if (now - lastStorageCleanTime < 25000) return;
       lastStorageCleanTime = now;
 
       try {
@@ -342,10 +329,9 @@
       } catch (e) {}
     };
 
-    // ==================== CƠ CHẾ DỰ PHÒNG: TỰ KHÔI PHỤC KHI BỊ CHẶN CỨNG (GIỮ NGUYÊN 100%) ====================
+    // ==================== CƠ CHẾ DỰ PHÒNG: TỰ KHÔI PHỤC KHI BỊ CHẶN CỨNG ====================
     const forceEmergencyRecovery = (video) => {
       console.log("[Jungle Diamond Fallback] Kích hoạt cơ chế hồi sinh stream khẩn cấp!");
-      // Buộc dọn bộ nhớ ngay lập tức mà không cần đợi bộ đếm thời gian
       lastStorageCleanTime = 0;
       cleanEnforcementStorage();
 
@@ -360,7 +346,7 @@
       }
     };
 
-    // ==================== [BỔ SUNG 2026] ĐỘNG CƠ TỰ CHỮA LÀNH LUỒNG TẢI TRÁNH BỊ BÓP BĂNG THÔNG ====================
+    // ==================== ĐỘNG CƠ TỰ CHỮA LÀNH LUỒNG TẢI TRÁNH BỊ BÓP BĂNG THÔNG ====================
     const runSelfHealingCore = (video) => {
         if (!video || isUserIntentionallyPaused || document.querySelector('.ad-showing, .ad-interrupting')) return;
         const now = Date.now();
@@ -370,9 +356,9 @@
         if (!video.paused) {
             if (video.currentTime === lastVideoPosition) {
                 if (now - lastStallCheckTime > 2500) { 
-                    lastStorageCleanTime = 0; // Kích hoạt dọn dẹp khẩn cấp khi đứng hình nạp
+                    lastStorageCleanTime = 0; 
                     cleanEnforcementStorage();
-                    video.currentTime += 0.1; // Nhích nhẹ giải tỏa trạng thái treo nạp ngầm
+                    video.currentTime += 0.1; 
                     video.play().catch(() => {});
                     lastStallCheckTime = now;
                 }
@@ -383,7 +369,25 @@
         }
     };
 
-    // ==================== ENGINE 3: NONSTOP ĐỒNG BỘ - ĐIỀU PHỐI THÔNG MINH (GIỮ NGUYÊN 100%) ====================
+    // ==================== BIOMETRIC ENTROPY (ĐIỂM 1: CHUYỂN SANG REQUESTIDLECALLBACK TRÁNH MICRO-STUTTERING) ====================
+    const runBiometricEntropy = (video) => {
+        if (document.hidden || (Date.now() - lastPhysicalInteraction < 5000)) return;
+        
+        const player = document.getElementById('movie_player');
+        if (player && video && !video.paused && !document.querySelector('.ad-showing, .ad-interrupting')) {
+            if (isUserReadingComments) {
+                window.scrollBy({ top: SESSION_SEED > 0.5 ? 1 : -1, behavior: 'smooth' });
+            }
+            const rect = player.getBoundingClientRect();
+            player.dispatchEvent(new MouseEvent('mousemove', {
+                clientX: rect.left + (rect.width * (0.25 + SESSION_SEED * 0.5)),
+                clientY: rect.top + (rect.height * (0.25 + SESSION_SEED * 0.5)),
+                bubbles: true
+            }));
+        }
+    };
+
+    // ==================== ENGINE 3: NONSTOP ĐỒNG BỘ - ĐIỀU PHỐI THÔNG MINH ====================
     let isHandlingNonstop = false;
     let lastExecutionTime = 0;
 
@@ -424,7 +428,6 @@
           needForcePlay = true;
         }
 
-        // NÂNG CẤP C: Tàng hình hành vi kích hoạt phát video không để lại dấu vết ảo
         if (video.paused && (needForcePlay || !isUserIntentionallyPaused)) {
           const player = document.getElementById('movie_player');
           if (player && typeof player.playVideo === 'function') {
@@ -434,7 +437,6 @@
           const playPromise = video.play();
           if (playPromise !== undefined) {
             playPromise.catch(() => {
-              // Nếu trình duyệt chặn auto-play lập tức bấm nút UI gốc thay vì gửi phím ảo
               const playBtn = document.querySelector('.ytp-play-button');
               if (playBtn) playBtn.click();
             });
@@ -442,49 +444,86 @@
         }
       } catch (e) {
         console.log('[Jungle Diamond Nonstop Error]: ', e);
-      } finally { // <--- ĐÃ SỬA LỖI TẠI ĐÂY
+      } finally {
         isHandlingNonstop = false;
       }
     };
 
-    // ==================== KHỞI CHẠY HỆ THỐNG GIÁM SÁT REAL-TIME (GIỮ NGUYÊN TOÀN BỘ CẤU TRÚC GỐC) ====================
+    // ==================== ĐIỂM 2: VÒNG LẶP CORE LOOP ĐIỀU PHỐI TRUNG TÂM BIẾN THIÊN THÔNG MINH ====================
+    // Triệt tiêu toàn bộ các setInterval độc lập chạy 1s để giảm "CPU Wake-ups", ngăn biến video bị stale
+    const startCentralCoreLoop = () => {
+        const now = Date.now();
+        const freshVideo = document.querySelector('.html5-main-video');
+
+        if (freshVideo) {
+            // Cảnh báo bổ sung: Luôn kiểm tra gia tốc ảo bên trong lõi điều phối để không lọt trạng thái quảng cáo
+            executeVirtualAcceleration(freshVideo);
+
+            // Kiểm tra bóp tiến trình ngầm định kỳ độc lập
+            runSelfHealingCore(freshVideo);
+
+            // Xử lý chống tạm dừng tự động
+            const isAdShowing = document.querySelector('.ad-showing, .ad-interrupting');
+            if (freshVideo.paused && !isAdShowing && !isUserIntentionallyPaused && (now - lastPhysicalInteraction > INTERACTION_WINDOW)) {
+                window.nonstopHandler();
+            }
+        }
+
+        // Tích hợp dọn dẹp đĩa cứng tập trung (Throttled 25 giây)
+        cleanEnforcementStorage();
+
+        // Tích hợp giả lập sinh trắc học thông minh sử dụng requestIdleCallback để chạy khi CPU rảnh rỗi
+        if (now - lastBiometricTime >= (4000 + (SESSION_SEED * 3000))) {
+            if (typeof requestIdleCallback === 'function') {
+                requestIdleCallback(() => {
+                    runBiometricEntropy(freshVideo);
+                });
+            } else {
+                runBiometricEntropy(freshVideo);
+            }
+            lastBiometricTime = now;
+        }
+
+        // Tối ưu hóa chu kỳ đánh thức biến thiên: Nếu video đang bị treo nạp ngầm, đẩy nhanh tần suất kiểm tra (250ms), 
+        // ngược lại nếu luồng phát mượt mà, giãn chu kỳ ra 1000ms để CPU nghỉ ngơi tuyệt đối.
+        let dynamicInterval = 1000;
+        if (freshVideo && !freshVideo.paused && freshVideo.currentTime === lastVideoPosition) {
+            dynamicInterval = 250; 
+        }
+
+        setTimeout(startCentralCoreLoop, dynamicInterval);
+    };
+
+    // ==================== KHỞI CHẠY HỆ THỐNG GIÁM SÁT REAL-TIME ====================
     const initObserver = () => {
       const player = document.getElementById('movie_player');
       const video = document.querySelector('.html5-main-video');
 
-          if (!player || !video) {
-            setTimeout(initObserver, 150);
-            return;
-          }
+      if (!player || !video) {
+        setTimeout(initObserver, 150);
+        return;
+      }
 
-      // [BỔ SUNG 2026 KHÔNG CAN THIỆP SÂU]: Tạo sinh trắc học hành vi ảo tránh quét Bot tĩnh
-      const runBiometricEntropy = () => {
-          if (document.hidden || (Date.now() - lastPhysicalInteraction < 5000)) return;
-          if (video && !video.paused && !document.querySelector('.ad-showing, .ad-interrupting')) {
-              if (isUserReadingComments) {
-                  window.scrollBy({ top: SESSION_SEED > 0.5 ? 1 : -1, behavior: 'smooth' });
-              }
-              const rect = player.getBoundingClientRect();
-              player.dispatchEvent(new MouseEvent('mousemove', {
-                  clientX: rect.left + (rect.width * (0.25 + SESSION_SEED * 0.5)),
-                  clientY: rect.top + (rect.height * (0.25 + SESSION_SEED * 0.5)),
-                  bubbles: true
-              }));
-          }
-      };
-      setInterval(runBiometricEntropy, 4000 + (SESSION_SEED * 3000));
+      // Kích hoạt Vòng Lặp Lõi Điều Phối Biến Thiên Trung Tâm
+      startCentralCoreLoop();
 
+      // Giám sát MutationObserver thuộc tính khung Player
       new MutationObserver(() => {
-        executeVirtualAcceleration(video);
+        const freshVideo = document.querySelector('.html5-main-video');
+        if (freshVideo) executeVirtualAcceleration(freshVideo);
       }).observe(player, {
         attributes: true,
         attributeFilter: ['class']
       });
 
+      // Lắng nghe sự kiện luồng video chính thống tránh lỗi stale tham chiếu cũ
       ['play', 'ratechange', 'playing'].forEach(evt => {
         video.addEventListener(evt, () => {
-            executeVirtualAcceleration(video);
-            runSelfHealingCore(video); // Gọi thêm cơ chế vá luồng phụ trợ
+            const freshVideo = document.querySelector('.html5-main-video');
+            if (freshVideo) {
+                executeVirtualAcceleration(freshVideo);
+                runSelfHealingCore(freshVideo);
+            }
         });
       });
 
@@ -496,16 +535,7 @@
         }
       });
 
-      setInterval(() => {
-        const isAdShowing = document.querySelector('.ad-showing, .ad-interrupting');
-        if (video.paused && !isAdShowing && !isUserIntentionallyPaused && (Date.now() - lastPhysicalInteraction > INTERACTION_WINDOW)) {
-          window.nonstopHandler();
-        }
-        runSelfHealingCore(video); // Kiểm tra bóp tiến trình ngầm định kỳ độc lập
-        cleanEnforcementStorage();
-      }, 1000);
-
-      // NÂNG CẤP B: Chống spam log rác và giảm tải CPU bằng Debounce độc lập (50ms)
+      // Chống spam log rác và giảm tải CPU bằng Debounce độc lập (50ms)
       let debounceTimer = null;
       const dialogObserver = new MutationObserver(() => {
         if (debounceTimer) clearTimeout(debounceTimer);
@@ -522,7 +552,7 @@
         });
       }
 
-      // [BỔ SUNG 2026 KHÔNG CAN THIỆP SÂU]: Quét vùng comment bằng IntersectionObserver theo chu trình SPA 
+      // Quét vùng comment bằng IntersectionObserver theo chu trình SPA 
       const setupCommentObserver = () => {
           if (currentCommentObserver) currentCommentObserver.disconnect();
           const commentsSection = document.getElementById('comments');
@@ -536,7 +566,7 @@
       setupCommentObserver();
       window.addEventListener('yt-navigate-finish', () => {
           setupCommentObserver();
-          // Chuyển video mới -> kích hoạt dọn dẹp bộ nhớ ngay lập tức để làm sạch tài nguyên tab mới
+          // Chuyển video mới -> ép dọn dẹp bộ nhớ khẩn cấp ngay để làm sạch tài nguyên tab mới
           lastStorageCleanTime = 0;
           cleanEnforcementStorage();
       });
