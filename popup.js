@@ -7,15 +7,15 @@ const i18n = {
         updateAvailable: "🚀 NEW UPDATE AVAILABLE! CLICK TO DOWNLOAD",
         titleFeatures: "CORE FEATURES",
         f1: "Completely blocks pre-roll, mid-roll, banners, and sponsored sidebar ads.",
-        f2: "Eliminates 'Continue watching' dialogs and adblock detection warnings.",
-        f3: "Auto-forwards and safely skips ads instantly in milliseconds.",
-        f4: "Filters physical interactions (Click, Space, K) to prevent emulation scanning.",
+        f2: "Actively defeats video freezing, background throttling, and 0.1x playback rate sabotages.",
+        f3: "Emulates biological human reflex delays (260ms-450ms) when skipping to avoid bot detection.",
+        f4: "Injects background behavioral entropy and monitors RAM heap memory with automated lifecycles.",
         titleAlgo: "MULTI-LAYER ALGORITHM",
         thMechanism: "Mechanism",
         thDesc: "Protection Layer Description",
-        t1: "Injects core logic directly into the website context.",
-        t2: "Manipulates real-time playerResponse data structures.",
-        t3: "Bypasses the latest adblock scanning firewalls.",
+        t1: "Protects session integrity by masking AudioContext, WebGL, and hardware metadata.",
+        t2: "Constantly monitors operational video states to force play and auto-recover from stalls.",
+        t3: "Mimics physical interaction curves and keyboard signaling to blur active user presence.",
         author: "Author:",
         donate: "Project Maintenance (Vietcombank)"
     },
@@ -26,23 +26,23 @@ const i18n = {
         resetSuccess: "Hệ thống đã được cập nhật!",
         updateAvailable: "🚀 CÓ BẢN CẬP NHẬT MỚI! BẤM ĐỂ TẢI VỀ",
         titleFeatures: "TÍNH NĂNG CỐT LÕI",
-        f1: "Chặn triệt để pre-roll, mid-roll, banner, quảng cáo tài trợ thanh bên.",
-        f2: "Xóa sổ hộp thoại 'Continue watching' và cảnh báo phát hiện chặn quảng cáo.",
-        f3: "Tự động tua nhanh, bỏ qua quảng cáo an toàn trong tích tắc.",
-        f4: "Lọc hành vi tương tác vật lý (Click, Space, K) tránh quét giả lập.",
+        f1: "Chặn triệt để pre-roll, mid-roll, banner, và quảng cáo tài trợ thanh bên.",
+        f2: "Chủ động vô hiệu hóa đóng băng video, bóp băng thông chạy ngầm và hạ tốc độ phát 0.1x.",
+        f3: "Giả lập độ trễ cung phản xạ người (260ms-450ms) khi bỏ qua quảng cáo để qua mặt quét bot.",
+        f4: "Tiêm nhiễu hành vi ngẫu nhiên chạy nền và giám sát rò rỉ RAM bằng chu kỳ tự động dọn rác.",
         titleAlgo: "THUẬT TOÁN ĐA TẦNG",
         thMechanism: "Cơ Chế",
         thDesc: "Mô Tả Lớp Bảo Vệ",
-        t1: "Nhúng trực tiếp lõi xử lý sâu vào ngữ cảnh trang web.",
-        t2: "Thao túng cấu trúc dữ liệu playerResponse thời gian thực.",
-        t3: "Vượt qua tường lửa quét adblock cập nhật mới nhất.",
+        t1: "Bảo vệ tính nhất quán toàn phiên bằng cách ẩn dữ liệu AudioContext, WebGL và phần cứng.",
+        t2: "Giám sát liên tục trạng thái video để cưỡng chế phát và tự chữa lành khi bị kẹt luồng tải.",
+        t3: "Mô phỏng đường cong tương tác vật lý và tín hiệu bàn phím để làm mờ dấu vết tự động.",
         author: "Tác giả:",
         donate: "Duy trì dự án (Vietcombank)"
     }
 };
 
 let currentLang = 'en';
-let githubDownloadUrl = "https://github.com/ThaiThongSJ/Pitch-Shifter-Daimon"; 
+let githubDownloadUrl = "https://github.com/ThaiThongSJ/REMOVEADBLOCK-YOUTUBE-PRO"; 
 let hasNewVersion = false;
 let latestVersion = ""; // Biến lưu số phiên bản mới phục vụ khóa lặp
 
