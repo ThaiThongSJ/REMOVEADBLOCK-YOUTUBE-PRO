@@ -4,9 +4,10 @@
 > Advanced YouTube Ad Blocker with **Stealth Injection Technology** and Intelligent Adaptive Recovery System.
 
 ---
-
+### 🎥 **Demo on YouTube**
+[![Watch Demo](https://img.shields.io/badge/Watch_Demo_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)]([https://www.youtube.com/watch?v=fgNlHcOxvxI](https://youtu.be/PGSILkWrKjU))
 ## ✨ CORE FEATURES
-
+---
 - **Complete Ad Elimination**: Fully removes pre-roll, mid-roll, overlay, banner, and sponsored content
 - **Enforcement Destruction**: Automatically eliminates "Continue Watching", "Ad blocker detected", and enforcement dialogs
 - **Smart Auto-Skip & Acceleration**: Intelligent fast-forward and instant ad skipping
