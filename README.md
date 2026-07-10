@@ -55,13 +55,12 @@ The heart of **RemoveAdblock Pro 14.9.16** is its intelligent multi-layered defe
 
 ## 📥 INSTALLATION GUIDE
 
-Since Version 14.9.16 is architected as an elite UserScript, you can deploy it using any standard script manager:
-
-1. Install a user script manager extension such as **Tampermonkey**, **Violentmonkey**, or **Greasemonkey** from your browser's extension store.
-2. Open the script manager dashboard and click **"Create a new script"**.
-3. Copy the entire source code of `Jungle Diamond 14.9.16`.
-4. Paste it into the editor, replacing any default template, and press `Ctrl + S` (or `Cmd + S`) to save.
-5. Navigate to **YouTube**, the script will automatically initialize at `document-start` and secure your stream!
+1. Download the extension source code (folder or zip)
+2. Open your browser (**Chrome / Edge / Brave**)
+3. Go to `chrome://extensions/` or `edge://extensions/`
+4. Enable **Developer Mode**
+5. Click **"Load unpacked"** → Select the folder containing the extension
+6. Done! The extension will activate immediately
 
 ---
 
