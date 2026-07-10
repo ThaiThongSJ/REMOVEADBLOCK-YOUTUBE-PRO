@@ -1,9 +1,28 @@
 const VERSION_CHECK_URL = "https://raw.githubusercontent.com/ThaiThongSJ/REMOVEADBLOCK-YOUTUBE-PRO/refs/heads/main/version.json";
 const MIN_CHECK_INTERVAL = 21600000; 
 
+// Hàm so sánh phiên bản thông minh (Semantic Version Comparison)
+// Trả về true nếu phiên bản latest thực sự LỚN HƠN phiên bản current
+function isNewerVersion(currentStr, latestStr) {
+    if (!currentStr || !latestStr) return false;
+    
+    const currentParts = currentStr.split('.').map(Number);
+    const latestParts = latestStr.split('.').map(Number);
+    const maxLength = Math.max(currentParts.length, latestParts.length);
+    
+    for (let i = 0; i < maxLength; i++) {
+        const currentNum = currentParts[i] || 0;
+        const latestNum = latestParts[i] || 0;
+        
+        if (latestNum > currentNum) return true;  // Bản server lớn hơn -> Cần cập nhật
+        if (latestNum < currentNum) return false; // Bản hiện tại lớn hơn (bản dev) -> Không cần
+    }
+    return false; // Hai phiên bản bằng nhau
+}
+
 chrome.runtime.onInstalled.addListener(async (details) => {
-    // Khi người dùng cài bản cài mới cứng hoàn toàn, xóa bỏ vết skip cũ
-    if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    // Sửa lỗi chính tả từ API gốc: Kiểm tra nếu cài mới hoàn toàn
+    if (details.reason === "install") {
         await chrome.storage.local.remove(["lastCheckTime", "updateInfo", "isSkippedUpdate"]);
         
         const storage = await chrome.storage.local.get(["appLanguage"]);
@@ -15,7 +34,7 @@ chrome.runtime.onInstalled.addListener(async (details) => {
             url: chrome.runtime.getURL("TT.html")
         });
     } else {
-        // Nếu chỉ là reload/update thông thường, giữ lịch sử để tránh nhảy lại nút ảo
+        // Nếu chỉ là reload/update thông thường, reset bộ đếm thời gian để ép quét lại ngay
         await chrome.storage.local.remove(["lastCheckTime"]);
     }
 
@@ -24,47 +43,50 @@ chrome.runtime.onInstalled.addListener(async (details) => {
 });
 
 async function checkForUpdates() {
-  const now = Date.now();
-  const CURRENT_VERSION = chrome.runtime.getManifest().version;
+    const now = Date.now();
+    const CURRENT_VERSION = chrome.runtime.getManifest().version;
 
-  try {
-    const storage = await chrome.storage.local.get(["lastCheckTime", "isSkippedUpdate"]);
-    const lastCheckTime = storage.lastCheckTime || 0;
-    const isSkippedUpdate = storage.isSkippedUpdate || "";
+    try {
+        const storage = await chrome.storage.local.get(["lastCheckTime", "isSkippedUpdate"]);
+        const lastCheckTime = storage.lastCheckTime || 0;
+        const isSkippedUpdate = storage.isSkippedUpdate || "";
 
-    if (lastCheckTime > 0 && (now - lastCheckTime < MIN_CHECK_INTERVAL)) {
-      return;
+        if (lastCheckTime > 0 && (now - lastCheckTime < MIN_CHECK_INTERVAL)) {
+            return;
+        }
+
+        const response = await fetch(VERSION_CHECK_URL + "?t=" + now, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const data = await response.json();
+        await chrome.storage.local.set({ lastCheckTime: now });
+
+        // NÂNG CẤP THÔNG MINH: Chỉ xử lý nếu có biến latest_version và nó thực sự LỚN HƠN bản hiện tại
+        if (data.latest_version && isNewerVersion(CURRENT_VERSION, data.latest_version)) {
+            
+            // Nếu phiên bản mới này trùng với phiên bản người dùng đã bấm bỏ qua/tải trước đó -> Ẩn nút
+            if (data.latest_version === isSkippedUpdate) {
+                console.log("[Update] Bản mới trùng với bản đã bấm tải/bỏ qua trước đó. Ẩn nhảy nút.");
+                await chrome.storage.local.remove(["updateInfo"]);
+                return;
+            }
+
+            await chrome.storage.local.set({ updateInfo: data });
+            console.log(`%c[Update] ✅ ĐÃ CÓ BẢN MỚI HƠN: ${data.latest_version} (Hiện tại: ${CURRENT_VERSION})`, "color:lime;font-weight:bold");
+        } else {
+            // Nếu phiên bản bằng nhau hoặc bản máy cục bộ cao hơn bản server (bản bạn đang code dở)
+            await chrome.storage.local.remove(["updateInfo", "isSkippedUpdate"]);
+            console.log(`[Update] Bạn đang dùng bản bằng hoặc cao hơn server (Cục bộ: ${CURRENT_VERSION} >= Server: ${data.latest_version || 'N/A'}).`);
+        }
+
+    } catch (e) {
+        console.error("[Update] Lỗi kết nối máy chủ:", e);
     }
-
-    const response = await fetch(VERSION_CHECK_URL + "?t=" + now, { cache: 'no-store' });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const data = await response.json();
-    await chrome.storage.local.set({ lastCheckTime: now });
-
-    if (data.latest_version && data.latest_version !== CURRENT_VERSION) {
-      // NÂNG CẤP: Nếu phiên bản này trùng với phiên bản người dùng đã bấm tải trước đó -> Bỏ qua không nhảy nút nữa
-      if (data.latest_version === isSkippedUpdate) {
-          console.log("[Update] Phiên bản này đã được bấm tải về trước đó. Ẩn nhảy nút.");
-          await chrome.storage.local.remove(["updateInfo"]);
-          return;
-      }
-
-      await chrome.storage.local.set({ updateInfo: data });
-      console.log(`%c[Update] ✅ ĐÃ CÓ BẢN MỚI: ${data.latest_version}`, "color:lime;font-weight:bold");
-    } else {
-      await chrome.storage.local.remove(["updateInfo", "isSkippedUpdate"]);
-      console.log("[Update] Bạn đang sử dụng phiên bản mới nhất.");
-    }
-
-  } catch (e) {
-    console.error("[Update] Lỗi kết nối máy chủ:", e);
-  }
 }
 
 chrome.runtime.onStartup.addListener(checkForUpdates);
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "checkUpdateAlarm") checkForUpdates();
+    if (alarm.name === "checkUpdateAlarm") checkForUpdates();
 });
 
 // LẮNG NGHE LỆNH TỪ POPUP
