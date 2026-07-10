@@ -58,14 +58,14 @@ The core of **Jungle Diamond** is built on an intelligent, adaptive defense arch
 
 ---
 
-## 📥 **Installation Guide**
+## 📥 INSTALLATION GUIDE
 
-1. Install **Tampermonkey** or **Violentmonkey** in your browser
-2. Click the **Raw** button on the script file
-3. Confirm installation in the userscript manager
-4. Refresh any YouTube page — **Jungle Diamond activates automatically**
-
-**No configuration required.** Works on both desktop and mobile YouTube.
+1. Download the extension source code (folder or zip)
+2. Open your browser (**Chrome / Edge / Brave**)
+3. Go to `chrome://extensions/` or `edge://extensions/`
+4. Enable **Developer Mode**
+5. Click **"Load unpacked"** → Select the folder containing the extension
+6. Done! The extension will activate immediately
 
 ---
 
