@@ -55,12 +55,29 @@ The heart of **RemoveAdblock Pro 14.9.16** is its intelligent multi-layered defe
 
 ## 📥 INSTALLATION GUIDE
 
-1. Download the extension source code (folder or zip)
-2. Open your browser (**Chrome / Edge / Brave**)
-3. Go to `chrome://extensions/` or `edge://extensions/`
-4. Enable **Developer Mode**
-5. Click **"Load unpacked"** → Select the folder containing the extension
-6. Done! The extension will activate immediately
+Choose one of the two deployment models below. **Method 1 (Native Extension)** is highly recommended as it provides the ultimate standalone security layers, an isolated service worker, and the complete integrated control panel (`TT.html`).
+
+### 📦 Method 1: Chrome Extension Deployment (Recommended & Complete Build)
+This is the official full-stack architecture. It runs natively within the browser sandbox, making it significantly harder for YouTube’s scripts to detect or throttle.
+
+1. **Download & Extract**: Download the extension repository and extract the ZIP archive into a permanent folder on your drive.
+2. **Open Extension Settings**: Launch your Chromium-based browser (**Chrome / Edge / Brave / Opera**) and head to the manager panel:
+   * Chrome/Brave: `chrome://extensions/`
+   * Edge: `edge://extensions/`
+3. **Enable Developer Mode**: Toggle the **"Developer mode"** switch located in the top-right corner.
+4. **Deploy Unpacked Source**: Click the **"Load unpacked"** button in the top-left area.
+5. **Select Root Directory**: Select the extracted folder containing your `manifest.json` file.
+6. **Initialization Complete**: The extension activates immediately. Tap the Extension puzzle icon to pin your custom dashboard!
+
+---
+
+### 📜 Method 2: UserScript Manager (Alternative Lightweight Routine)
+If you prefer running the logic via a standard script manager without installing the full standalone extension files, use this route:
+
+1. **Install Manager**: Add a script manager extension like **Tampermonkey** or **Violentmonkey** from your browser's store.
+2. **Inject New Core**: Open the manager dashboard and select **"Create a new script"**.
+3. **Paste Source**: Replace all default template code with the raw JavaScript engine of `Jungle Diamond 14.9.16`.
+4. **Commit Changes**: Press `Ctrl + S` (or `Cmd + S`) to save. The ruleset will automatically execute at `document-start` on any YouTube frame.
 
 ---
 
