@@ -5,7 +5,7 @@
 
 ---
 ### 🎥 **Demo on YouTube**
-[![Watch Demo](https://img.shields.io/badge/Watch_Demo_on_YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)]([https://www.youtube.com/watch?v=fgNlHcOxvxI](https://youtu.be/PGSILkWrKjU))
+
 ## ✨ CORE FEATURES
 ---
 - **Complete Ad Elimination**: Fully removes pre-roll, mid-roll, overlay, banner, and sponsored content
