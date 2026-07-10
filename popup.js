@@ -8,14 +8,14 @@ const i18n = {
         titleFeatures: "CORE FEATURES",
         f1: "Completely blocks pre-roll, mid-roll, banners, and sponsored sidebar ads.",
         f2: "Actively defeats video freezing, background throttling, and 0.1x playback rate sabotages.",
-        f3: "Emulates biological human reflex delays (260ms-450ms) when skipping to avoid bot detection.",
-        f4: "Injects background behavioral entropy and monitors RAM heap memory with automated lifecycles.",
+        f3: "Emulates organic biometric mouse movements and intelligent comment viewport scrolling to defeat static bot detection.",
+        f4: "Periodically flushes anti-adblock tracking tokens from local storage cache to ensure zero data telemetry leaks.",
         titleAlgo: "MULTI-LAYER ALGORITHM",
         thMechanism: "Mechanism",
         thDesc: "Protection Layer Description",
         t1: "Protects session integrity by masking AudioContext, WebGL, and hardware metadata.",
         t2: "Constantly monitors operational video states to force play and auto-recover from stalls.",
-        t3: "Mimics physical interaction curves and keyboard signaling to blur active user presence.",
+        t3: "Mimics physical cursor vectors and adaptive viewport interaction to blur automated background presence.",
         author: "Author:",
         donate: "Project Maintenance (Vietcombank)"
     },
@@ -28,14 +28,14 @@ const i18n = {
         titleFeatures: "TÍNH NĂNG CỐT LÕI",
         f1: "Chặn triệt để pre-roll, mid-roll, banner, và quảng cáo tài trợ thanh bên.",
         f2: "Chủ động vô hiệu hóa đóng băng video, bóp băng thông chạy ngầm và hạ tốc độ phát 0.1x.",
-        f3: "Giả lập độ trễ cung phản xạ người (260ms-450ms) khi bỏ qua quảng cáo để qua mặt quét bot.",
-        f4: "Tiêm nhiễu hành vi ngẫu nhiên chạy nền và giám sát rò rỉ RAM bằng chu kỳ tự động dọn rác.",
+        f3: "Giả lập dịch chuyển chuột sinh trắc học và tự động cuộn trang vùng bình luận để bẻ gãy bộ quét bot tĩnh.",
+        f4: "Định kỳ dọn sạch mã độc tố theo dõi ẩn trong bộ nhớ LocalStorage giúp tối ưu hóa luồng lưu trữ lâu dài.",
         titleAlgo: "THUẬT TOÁN ĐA TẦNG",
         thMechanism: "Cơ Chế",
         thDesc: "Mô Tả Lớp Bảo Vệ",
         t1: "Bảo vệ tính nhất quán toàn phiên bằng cách ẩn dữ liệu AudioContext, WebGL và phần cứng.",
         t2: "Giám sát liên tục trạng thái video để cưỡng chế phát và tự chữa lành khi bị kẹt luồng tải.",
-        t3: "Mô phỏng đường cong tương tác vật lý và tín hiệu bàn phím để làm mờ dấu vết tự động.",
+        t3: "Mô phỏng vectơ con trỏ vật lý và tương tác vùng nhìn thích ứng để làm mờ dấu vết tự động.",
         author: "Tác giả:",
         donate: "Duy trì dự án (Vietcombank)"
     }
@@ -104,7 +104,6 @@ document.getElementById('resetEngineBtn').addEventListener('click', function() {
             window.open(githubDownloadUrl, '_blank');
         }
 
-        // NÂNG CẤP: Truyền kèm thông tin số phiên bản để khóa không cho nhảy lại bản này
         if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
             chrome.runtime.sendMessage({ action: "clearUpdateBadge", version: latestVersion }, (response) => {
                 hasNewVersion = false;
