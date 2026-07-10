@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Jungle Diamond 14.9.5 - Adaptive Stealth Architecture
 // @namespace    https://github.com/
-// @version      14.9.5
+// @version      14.9.6
 // @description  Hệ thống Proxy tàng hình, gia tăng cơ chế dự phòng tự phục hồi stream khi dính Flag.
-// @author       Jungle + Gemini
+// @author       Thai Thong + VN
 // @match        *://www.youtube.com/*
 // @match        *://m.youtube.com/*
 // @grant        none
@@ -49,9 +49,7 @@
         (document.head || document.documentElement).appendChild(style);
     };
     
-    // Thực thi ngay lập tức tại document-start
     injectCSS();
-    // Dự phòng khi DOM sẵn sàng hoàn toàn
     window.addEventListener('load', injectCSS, { once: true });
 
     // ==================== GIÁM SÁT THAO TÁC PHẦN CỨNG BẢO VỆ STREAM ====================
@@ -84,24 +82,34 @@
     };
     registerHardwareTracker();
 
-    // ==================== THAO TÚNG DỮ LIỆU TÀNG HÌNH (JSON PROXY) ====================
+    // ==================== NÂNG CẤP A: THAO TÚNG DỮ LIỆU BÓC LỘT SÂU TÀNG HÌNH ====================
     const manipulatePlayerResponse = (obj) => {
         if (!obj) return;
         
-        // 1. Phá vỡ cấu trúc cảnh báo Enforcement gốc
+        // 1. Phá vỡ cấu trúc Enforcement và lấp đầy khoảng trống dữ liệu để tránh treo stream
         if (obj.playabilityStatus) {
-            if (obj.playabilityStatus.status === "UNPLAYABLE" || obj.playabilityStatus.errorScreen || obj.playabilityStatus.status === "LOGIN_REQUIRED") {
+            if (obj.playabilityStatus.status === "UNPLAYABLE" || obj.playabilityStatus.errorScreen || obj.playabilityStatus.status === "LOGIN_REQUIRED" || obj.playabilityStatus.messages) {
+                obj.playabilityStatus.status = "OK";
                 delete obj.playabilityStatus.errorScreen;
                 delete obj.playabilityStatus.messages;
-                obj.playabilityStatus.status = "OK";
-                console.log("[Jungle Proxy] Thay đổi trạng thái luồng gốc thành OK thành công!");
+                
+                // Đảm bảo trình phát không đứng im bằng cách mở khóa chế độ nhúng luồng ngầm
+                if (!obj.playabilityStatus.playableInEmbed) {
+                    obj.playabilityStatus.playableInEmbed = true;
+                }
+                console.log("[Jungle Proxy] Ép trạng thái luồng gốc & Bỏ lỗi màn hình đen thành công!");
             }
         }
         
-        // 2. Triệt tiêu mọi ngóc ngách của cấu trúc Ads/Enforcement trong gói JSON
+        // 2. Triệt tiêu mọi ngóc ngách quảng cáo trong gói dữ liệu JSON
         if (obj.adPlacements) obj.adPlacements = [];
         if (obj.playerAds) delete obj.playerAds;
         if (obj.playerConfig) delete obj.playerConfig;
+        
+        // Loại bỏ phân đoạn luồng chứa mã mồi điều hướng quảng cáo ngầm ẩn để chống khựng video
+        if (obj.streamingData && obj.streamingData.adaptiveFormats) {
+            obj.streamingData.adaptiveFormats = obj.streamingData.adaptiveFormats.filter(fmt => !fmt.signatureCipher);
+        }
         
         // Xóa bảng chặn nằm sâu trong cấu trúc UI phụ trợ
         if (obj.auxiliaryUi && obj.auxiliaryUi.messageRenderers && obj.auxiliaryUi.messageRenderers.enforcementMessageViewModel) {
@@ -273,12 +281,19 @@
             const backdrops = document.querySelectorAll('tp-yt-iron-overlay-backdrop');
             if (backdrops.length > 0) { backdrops.forEach(el => el.remove()); needForcePlay = true; }
 
+            // NÂNG CẤP C: Tàng hình hành vi kích hoạt phát video không để lại dấu vết ảo
             if (video.paused && (needForcePlay || !isUserIntentionallyPaused)) {
                 const player = document.getElementById('movie_player');
                 if (player && typeof player.playVideo === 'function') { player.playVideo(); }
-                video.play().catch(() => {
-                    video.dispatchEvent(new KeyboardEvent('keydown', { keyCode: 32, which: 32 }));
-                });
+                
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Nếu trình duyệt chặn auto-play lập tức bấm nút UI gốc thay vì gửi phím ảo
+                        const playBtn = document.querySelector('.ytp-play-button');
+                        if (playBtn) playBtn.click();
+                    });
+                }
             }
         } catch (e) {
             console.log('[Jungle Diamond Nonstop Error]: ', e);
@@ -318,10 +333,13 @@
             cleanEnforcementStorage();
         }, 1000);
 
-        let frameId = null;
+        // NÂNG CẤP B: Chống spam log rác và giảm tải CPU bằng Debounce độc lập (50ms)
+        let debounceTimer = null;
         const dialogObserver = new MutationObserver(() => {
-            if (frameId) return;
-            frameId = requestAnimationFrame(() => { window.nonstopHandler(); frameId = null; });
+            if (debounceTimer) clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                window.nonstopHandler();
+            }, 50);
         });
 
         const popupContainer = document.querySelector('ytd-popup-container') || document.getElementById('content');
