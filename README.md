@@ -1,5 +1,5 @@
-# 🛡️ **REMOVEADBLOCK PRO** **YouTube Ad Blocker - Version 14.9.16**
-![Version](https://img.shields.io/badge/Version-14.9.16-blue?style=for-the-badge)
+# 🛡️ **REMOVEADBLOCK PRO** **YouTube Ad Blocker - Version 14.9.17**
+![Version](https://img.shields.io/badge/Version-14.9.17-blue?style=for-the-badge)
 ![Platform](https://img.shields.io/badge/Platform-YouTube-red?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
@@ -27,7 +27,7 @@
 
 ## 🧠 MULTI-LAYER ALGORITHM
 
-The heart of **RemoveAdblock Pro 14.9.16** is its intelligent multi-layered defensive matrix:
+The heart of **RemoveAdblock Pro 14.9.17** is its intelligent multi-layered defensive matrix:
 
 **Core Engine = (Stealth Context Injection + JSON/ytcfg Proxy) × Self-Healing Core × Biometric Entropy**
 
