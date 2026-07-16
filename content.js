@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Jungle Diamond 14.9.16 - Adaptive Stealth Architecture Ultra
 // @namespace    https://github.com/
-// @version      14.9.16
+// @version      14.9.17
 // @description  Hệ thống cải tiến tối hậu: Giữ nguyên 100% cấu trúc gốc 14.9.5 mượt mà, đắp thêm lớp khiên chống bóp băng thông 2026 và đồng bộ hóa phiên.
 // @author       Thai Thong + VN + Gemini
 // @match        *://www.youtube.com/*
@@ -9,6 +9,37 @@
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
+const LANG_MAP = {
+    'vi': "Hệ thống đang tăng tốc bỏ qua quảng cáo...",
+    'en': "System accelerating, skipping ads...",
+    'de': "System beschleunigt, überspringe Werbung...",
+    'fr': "Système en accélération, passage des publicités...",
+    'es': "Sistema acelerando, saltando anuncios...",
+    'zh': "系统正在加速，跳过广告...",
+    'bo': "འཕྲུལ་འཁོར་མགྱོགས་སུ་གཏོང་བཞིན་པ། བརྡ་ខྱབ་བརྒལ་བཞིན་པ།",
+    'th': "ระบบกำลังเร่งความเร็ว ข้ามโฆษณา...",
+    'ms': "Sistem memecut, melangkau iklan...",
+    'id': "Sistem mempercepat, melewati iklan...",
+    'lo': "ລະບົບກຳລັງເລັ່ງ, ข้ามโຄສະນາ...",
+    'km': "ប្រព័ន្ធកំពុងបង្កើនល្បឿន ដោយរំលងការផ្សាយពាណិជ្ជកម្ម...",
+    'hi': "सिस्टम तेज हो रहा है, विज्ञापन छोड़े जा रहे हैं...",
+    'no': "Systemet akselererer, hopper over annonser...",
+    'da': "Systemet accelererer, springer reklamer over...",
+    'ja': "システムを加速中、広告をスキップしています...",
+    'ko': "시스템 가속 중, 광고 건ner뛰기...",
+    'it': "Sistema in accelerazione, salto pubblicità..."
+};
+
+// Khởi tạo và lưu trữ ngôn ngữ ngay lập tức (Chạy duy nhất 1 lần khi load trang)
+const USER_LOCALE_TEXT = (() => {
+    try {
+        const lang = navigator.language || navigator.userLanguage || 'en';
+        const shortLang = lang.split('-')[0].toLowerCase(); // Thêm toLowerCase phòng hờ trình duyệt trả về VI/EN viết hoa
+        return LANG_MAP[shortLang] || LANG_MAP['en'];
+    } catch (e) {
+        return LANG_MAP['en']; // Dự phòng tuyệt đối nếu có lỗi lạ xảy ra
+    }
+})();
 
 (function() {
     'use strict';
@@ -33,6 +64,9 @@
     let lastStallCheckTime = Date.now();
     let lastVideoPosition = 0;
     let currentCommentObserver = null;
+	// ==================== BIẾN MÀN CHE LOGO CSS THÔNG MINH ====================
+    let logoShieldDiv = null;
+    let shieldResizeObserver = null;
 
     // ==================== CÁC BIẾN KHỞI TẠO GỐC (GIỮ NGUYÊN BẢO TOÀN) ====================
     let lastPhysicalInteraction = 0;
@@ -148,6 +182,34 @@
                 }
                 return res;
             };
+
+            const defineIfConfigurable = (obj, prop, descriptor) => {
+                const desc = Object.getOwnPropertyDescriptor(obj, prop);
+                if (!desc || desc.configurable) {
+                    Object.defineProperty(obj, prop, descriptor);
+                }
+            };
+
+            defineIfConfigurable(navigator, 'webdriver', { get: () => false, configurable: true });
+            defineIfConfigurable(navigator, 'languages', { get: () => ['en-US', 'en'], configurable: true });
+            defineIfConfigurable(navigator, 'plugins', {
+                get: () => [{ name: 'Chrome PDF Plugin', filename: 'internal-pdf-viewer', description: 'Portable Document Format' }],
+                configurable: true
+            });
+            defineIfConfigurable(navigator, 'mimeTypes', {
+                get: () => [{ type: 'application/pdf', suffixes: 'pdf', description: 'Portable Document Format' }],
+                configurable: true
+            });
+
+            if (navigator.permissions && navigator.permissions.query) {
+                const nativePermissionsQuery = navigator.permissions.query.bind(navigator.permissions);
+                navigator.permissions.query = (parameters) => {
+                    if (parameters && parameters.name === 'notifications') {
+                        return Promise.resolve({ state: Notification.permission });
+                    }
+                    return nativePermissionsQuery(parameters);
+                };
+            }
         } catch (e) {}
     };
     advancedShieldFingerprinting();
@@ -252,11 +314,24 @@
     interceptYtcfg();
 
     // ==================== STEALTH REPORTING INTERCEPTOR ====================
-    const TRACKING_KEYWORDS = /ptracking|ad_status|conversion|bat\.bing|pagead|activeview|stats\/ads/;
+	const TRACKING_KEYWORDS = /ptracking|ad_status|conversion|bat\.bing|pagead|activeview|stats\/ads|doubleclick|pagead2|googlesyndication|google-analytics|analytics|player_204|ad_impression|log_event|youtubei\/v1\/ad|ad_break|report_ad|partnerwide|innertube|playback|attestation|signal|ytcfg|enforcement|adblock/;    
+    const shouldBlockTrackingRequest = (url) => {
+      return TRACKING_KEYWORDS.test((url || '').toString().toLowerCase());
+    };
+
+    const nativeSendBeacon = navigator.sendBeacon ? navigator.sendBeacon.bind(navigator) : null;
+    if (nativeSendBeacon) {
+      navigator.sendBeacon = function(url, data) {
+        if (shouldBlockTrackingRequest(url)) return true;
+        return nativeSendBeacon(url, data);
+      };
+    }
+
     const nativeOpen = XMLHttpRequest.prototype.open;
+    const nativeSend = XMLHttpRequest.prototype.send;
     XMLHttpRequest.prototype.open = function(method, url) {
-      const u = (url || '').toLowerCase();
-      if (TRACKING_KEYWORDS.test(u)) {
+      this.__jd_url = url;
+      if (shouldBlockTrackingRequest(url)) {
         if (navigator.sendBeacon) navigator.sendBeacon(url);
         Object.defineProperties(this, {
           status: { value: 200 },
@@ -274,40 +349,211 @@
       }
       return nativeOpen.apply(this, arguments);
     };
+    XMLHttpRequest.prototype.send = function(body) {
+      if (shouldBlockTrackingRequest(this.__jd_url)) {
+        if (navigator.sendBeacon) navigator.sendBeacon(this.__jd_url, body);
+        if (typeof this.onreadystatechange === 'function') setTimeout(this.onreadystatechange, 1);
+        if (typeof this.onload === 'function') setTimeout(this.onload, 1);
+        return;
+      }
+      return nativeSend.apply(this, arguments);
+    };
 
-    const nativeFetch = window.fetch;
+    const nativeFetch = window.fetch.bind(window);
     window.fetch = async function(input, init) {
-      const url = typeof input === 'string' ? input : (input && input.url) ? input.url : '';
-      if (TRACKING_KEYWORDS.test(url.toLowerCase())) {
+      let url = '';
+      if (typeof input === 'string') {
+        url = input;
+      } else if (input instanceof Request) {
+        url = input.url;
+      } else if (input && input.url) {
+        url = input.url;
+      }
+
+      if (shouldBlockTrackingRequest(url)) {
         if (navigator.sendBeacon) navigator.sendBeacon(url);
         return new Response('{}', {
           status: 200,
-          statusText: 'OK'
+          statusText: 'OK',
+          headers: { 'Content-Type': 'application/json' }
         });
       }
-      return nativeFetch.apply(this, arguments);
+      return nativeFetch(input, init);
+    };
+        // ==================== HỆ THỐNG MÀN CHE LOGO THÔNG MINH (ADAPTIVE CSS LOGO SHIELD) ====================
+    const createLogoShield = (parent) => {
+        if (logoShieldDiv && logoShieldDiv.parentNode === parent) return logoShieldDiv;
+        if (logoShieldDiv && logoShieldDiv.parentNode !== parent) {
+            logoShieldDiv.remove();
+            if (shieldResizeObserver) {
+                shieldResizeObserver.disconnect();
+                shieldResizeObserver = null;
+            }
+        }
+
+        logoShieldDiv = document.createElement('div');
+        logoShieldDiv.id = "jungle-logo-shield";
+        logoShieldDiv.style.cssText = `
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, #121212 0%, #070707 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease-in-out, visibility 0.25s;
+            visibility: hidden;
+            font-family: "Roboto", "YouTube Sans", Arial, sans-serif;
+            user-select: none;
+            box-sizing: border-box;
+            padding: 20px;
+        `;
+
+        const centerContainer = document.createElement('div');
+        centerContainer.style.cssText = `
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: scale(min(1, var(--shield-scale, 1)));
+            transition: transform 0.2s ease-out;
+        `;
+
+        const playButton = document.createElement('div');
+        playButton.style.cssText = `
+            width: clamp(70px, 10vw, 100px);
+            height: clamp(70px, 10vw, 100px);
+            background: rgba(244, 67, 54, 0.08);
+            border: 2px solid #ff1744;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 30px rgba(255, 23, 68, 0.35);
+            animation: pulse-glow-red 2s infinite ease-in-out;
+            position: relative;
+        `;
+
+        const playTriangle = document.createElement('div');
+        playTriangle.style.cssText = `
+            width: 0; height: 0;
+            border-top: clamp(14px, 2vw, 20px) solid transparent;
+            border-bottom: clamp(14px, 2vw, 20px) solid transparent;
+            border-left: clamp(24px, 3.5vw, 32px) solid #ff1744;
+            margin-left: clamp(5px, 0.8vw, 8px);
+        `;
+        playButton.appendChild(playTriangle);
+
+        const titleText = document.createElement('div');
+        titleText.textContent = "YT PREMIUM ULTRA";
+        titleText.style.cssText = `
+            color: #ffffff;
+            font-size: clamp(16px, 2.5vw, 24px);
+            font-weight: 900;
+            letter-spacing: 4px;
+            margin-top: 24px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        `;
+
+        const statusContainer = document.createElement('div');
+        statusContainer.style.cssText = `margin-top: 16px; display: flex; align-items: center; gap: 8px;`;
+
+        const pulseDot = document.createElement('div');
+        pulseDot.style.cssText = `
+            width: 8px; height: 8px; background-color: #00e676; border-radius: 50%;
+            box-shadow: 0 0 8px #00e676; animation: pulse-green 1.5s infinite;
+        `;
+
+        const statusText = document.createElement('div');
+       statusText.textContent = USER_LOCALE_TEXT; // Lấy trực tiếp hằng số đã lưu, tốc độ bàn thờ
+       statusText.style.cssText = `
+       color: rgba(255, 255, 255, 0.6);
+       font-size: clamp(11px, 1.5vw, 13px);
+       font-weight: 500;
+       `;
+
+        statusContainer.appendChild(pulseDot);
+        statusContainer.appendChild(statusText);
+
+        centerContainer.appendChild(playButton);
+        centerContainer.appendChild(titleText);
+        centerContainer.appendChild(statusContainer);
+
+        const footerText = document.createElement('div');
+        footerText.textContent = "Developer: ThaiThongSj@gmail.com";
+        footerText.style.cssText = `
+            position: absolute; bottom: clamp(15px, 4vw, 30px);
+            color: rgba(255, 255, 255, 0.3); font-size: clamp(9px, 1.2vw, 11px);
+        `;
+
+        if (!document.getElementById("jungle-shield-styles")) {
+            const styleSheet = document.createElement("style");
+            styleSheet.id = "jungle-shield-styles";
+            styleSheet.textContent = `
+                @keyframes pulse-glow-red { 0% { transform: scale(1); box-shadow: 0 0 30px rgba(255,23,68,0.35); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(255,23,68,0.6); } 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,23,68,0.35); } }
+                @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,230,118,0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0,230,118,0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,230,118,0); } }
+            `;
+            document.head.appendChild(styleSheet);
+        }
+
+        logoShieldDiv.appendChild(centerContainer);
+        logoShieldDiv.appendChild(footerText);
+        parent.appendChild(logoShieldDiv);
+
+        shieldResizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+                const width = entry.contentRect.width;
+                const scale = width < 400 ? 0.75 : (width < 600 ? 0.85 : 1);
+                logoShieldDiv.style.setProperty('--shield-scale', scale);
+            }
+        });
+        shieldResizeObserver.observe(parent);
+
+        return logoShieldDiv;
     };
 
-    // ==================== TUA GIA TỐC NGẦM ĐỘT PHÁ ====================
+    const toggleLogoShield = (show) => {
+        const moviePlayer = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
+        if (!moviePlayer) return;
+        const shield = createLogoShield(moviePlayer);
+        if (show) {
+            shield.style.visibility = "visible";
+            shield.style.opacity = "1";
+            shield.style.pointerEvents = "auto";
+        } else {
+            shield.style.opacity = "0";
+            shield.style.pointerEvents = "none";
+            setTimeout(() => {
+                if (shield.style.opacity === "0") shield.style.visibility = "hidden";
+            }, 250);
+        }
+    };
+        // ==================== TUA GIA TỐC NGẦM ĐỘT PHÁ + HIỂN THỊ LOGO SHIELD ====================
     const executeVirtualAcceleration = (video) => {
       if (!video) return;
       const isAdShowing = document.querySelector('.ad-showing, .ad-interrupting, .ytp-ad-player-overlay');
-      if (!isAdShowing) return;
+     
+      if (!isAdShowing) {
+        toggleLogoShield(false);
+        return;
+      }
+      // Kích hoạt màn che logo
+      toggleLogoShield(true);
 
       if (!video.muted) video.muted = true;
       video.volume = 0;
-
       if (isFinite(video.duration) && video.duration > 0) {
         video.currentTime = video.duration;
       } else {
         video.playbackRate = 16;
       }
-
       document.querySelectorAll('.ytp-ad-skip-button, .ytp-skip-ad-button, .ytp-ad-skip-button-modern, button[aria-label*="Skip"], button[aria-label*="Bỏ qua"]').forEach(btn => {
         btn.click();
-        btn.dispatchEvent(new MouseEvent('click', {
-          bubbles: true
-        }));
+        btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
       });
     };
 
@@ -327,6 +573,26 @@
           }
         }
       } catch (e) {}
+    };
+
+    const cleanEnforcementDOM = () => {
+      const selectors = [
+        'ytd-ad-slot-renderer',
+        'ytd-promoted-video-renderer',
+        '.ytp-ad-module',
+        '.video-ads',
+        '#player-ads',
+        '.ytp-ad-overlay-container',
+        'tp-yt-iron-overlay-backdrop',
+        'tp-yt-paper-dialog:has(ytd-enforcement-message-view-model)',
+        'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"]',
+        'ytd-enforcement-message-view-model',
+        '.ytp-ad-text-overlay',
+        '.ytp-ad-preview-container'
+      ];
+      selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => el.remove());
+      });
     };
 
     // ==================== CƠ CHẾ DỰ PHÒNG: TỰ KHÔI PHỤC KHI BỊ CHẶN CỨNG ====================
@@ -483,6 +749,8 @@
             }
             lastBiometricTime = now;
         }
+
+        cleanEnforcementDOM();
 
         // Tối ưu hóa chu kỳ đánh thức biến thiên: Nếu video đang bị treo nạp ngầm, đẩy nhanh tần suất kiểm tra (250ms), 
         // ngược lại nếu luồng phát mượt mà, giãn chu kỳ ra 1000ms để CPU nghỉ ngơi tuyệt đối.
