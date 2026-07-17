@@ -9,37 +9,47 @@
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
+// ==================== HỖ TRỢ ĐA NGÔN NGỮ THÔNG MINH (ƯU TIÊN TIẾNG VIỆT) ====================
 const LANG_MAP = {
     'vi': "Hệ thống đang tăng tốc bỏ qua quảng cáo...",
+    'vn': "Hệ thống đang tăng tốc bỏ qua quảng cáo...",   // Thêm biến thể
     'en': "System accelerating, skipping ads...",
     'de': "System beschleunigt, überspringe Werbung...",
     'fr': "Système en accélération, passage des publicités...",
     'es': "Sistema acelerando, saltando anuncios...",
     'zh': "系统正在加速，跳过广告...",
-    'bo': "འཕྲུལ་འཁོར་མགྱོགས་སུ་གཏོང་བཞིན་པ། བརྡ་ខྱབ་བརྒལ་བཞིན་པ།",
+    'bo': "འཕྲུལ་འཁོར་མགྱོགས་སུ་གཏོང་བཞིན་པ། བརྡ་ཁྱབ་བརྒལ་བཞིན་པ།",
     'th': "ระบบกำลังเร่งความเร็ว ข้ามโฆษณา...",
     'ms': "Sistem memecut, melangkau iklan...",
     'id': "Sistem mempercepat, melewati iklan...",
-    'lo': "ລະບົບກຳລັງເລັ່ງ, ข้ามโຄສະນາ...",
+    'lo': "ລະບົບກຳລັງເລັ່ງ, ข้ามໂຄສະນາ...",
     'km': "ប្រព័ន្ធកំពុងបង្កើនល្បឿន ដោយរំលងការផ្សាយពាណិជ្ជកម្ម...",
     'hi': "सिस्टम तेज हो रहा है, विज्ञापन छोड़े जा रहे हैं...",
-    'no': "Systemet akselererer, hopper over annonser...",
-    'da': "Systemet accelererer, springer reklamer over...",
     'ja': "システムを加速中、広告をスキップしています...",
-    'ko': "시스템 가속 중, 광고 건ner뛰기...",
+    'ko': "시스템 가속 중, 광고 스킵 중...",
     'it': "Sistema in accelerazione, salto pubblicità..."
 };
 
-// Khởi tạo và lưu trữ ngôn ngữ ngay lập tức (Chạy duy nhất 1 lần khi load trang)
+// Nhận diện ngôn ngữ siêu chắc chắn
 const USER_LOCALE_TEXT = (() => {
     try {
-        const lang = navigator.language || navigator.userLanguage || 'en';
-        const shortLang = lang.split('-')[0].toLowerCase(); // Thêm toLowerCase phòng hờ trình duyệt trả về VI/EN viết hoa
+        // Ưu tiên nhiều nguồn để tránh sai
+        let lang = (navigator.language || navigator.userLanguage || navigator.browserLanguage || 'en').toLowerCase();
+
+        // Xử lý cả vi-VN, vi-vn, vi, VN...
+        if (lang.includes('vi') || lang.includes('vn')) {
+            return LANG_MAP['vi'];
+        }
+
+        const shortLang = lang.split('-')[0].trim();
+        
         return LANG_MAP[shortLang] || LANG_MAP['en'];
     } catch (e) {
-        return LANG_MAP['en']; // Dự phòng tuyệt đối nếu có lỗi lạ xảy ra
+        console.log("[Jungle Shield] Language detection fallback to English");
+        return LANG_MAP['en'];
     }
 })();
+
 
 (function() {
     'use strict';
@@ -67,6 +77,7 @@ const USER_LOCALE_TEXT = (() => {
 	// ==================== BIẾN MÀN CHE LOGO CSS THÔNG MINH ====================
     let logoShieldDiv = null;
     let shieldResizeObserver = null;
+	let isShieldPreCreated = false;   // Cờ kiểm soát đã tạo shield lần đầu chưa
 
     // ==================== CÁC BIẾN KHỞI TẠO GỐC (GIỮ NGUYÊN BẢO TOÀN) ====================
     let lastPhysicalInteraction = 0;
@@ -380,61 +391,37 @@ const USER_LOCALE_TEXT = (() => {
       }
       return nativeFetch(input, init);
     };
-        // ==================== HỆ THỐNG MÀN CHE LOGO THÔNG MINH (ADAPTIVE CSS LOGO SHIELD) ====================
-    const createLogoShield = (parent) => {
-        if (logoShieldDiv && logoShieldDiv.parentNode === parent) return logoShieldDiv;
-        if (logoShieldDiv && logoShieldDiv.parentNode !== parent) {
-            logoShieldDiv.remove();
-            if (shieldResizeObserver) {
-                shieldResizeObserver.disconnect();
-                shieldResizeObserver = null;
-            }
-        }
+           // ==================== HỆ THỐNG MÀN CHE LOGO THÔNG MINH (TỐI ƯU HIỂN THỊ TỨC THÌ) ====================
+    const preCreateLogoShield = () => {
+        if (isShieldPreCreated) return;
+        const player = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
+        if (!player) return;
 
         logoShieldDiv = document.createElement('div');
         logoShieldDiv.id = "jungle-logo-shield";
         logoShieldDiv.style.cssText = `
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(180deg, #121212 0%, #070707 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease-in-out, visibility 0.25s;
-            visibility: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 1001; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease-out; visibility: hidden;
             font-family: "Roboto", "YouTube Sans", Arial, sans-serif;
-            user-select: none;
-            box-sizing: border-box;
-            padding: 20px;
+            user-select: none; box-sizing: border-box; padding: 20px;
         `;
 
         const centerContainer = document.createElement('div');
         centerContainer.style.cssText = `
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transform: scale(min(1, var(--shield-scale, 1)));
-            transition: transform 0.2s ease-out;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transform: scale(min(1, var(--shield-scale, 1))); transition: transform 0.15s ease-out;
         `;
 
         const playButton = document.createElement('div');
         playButton.style.cssText = `
-            width: clamp(70px, 10vw, 100px);
-            height: clamp(70px, 10vw, 100px);
-            background: rgba(244, 67, 54, 0.08);
-            border: 2px solid #ff1744;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: clamp(70px, 10vw, 100px); height: clamp(70px, 10vw, 100px);
+            background: rgba(244, 67, 54, 0.08); border: 2px solid #ff1744;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 0 30px rgba(255, 23, 68, 0.35);
             animation: pulse-glow-red 2s infinite ease-in-out;
-            position: relative;
         `;
 
         const playTriangle = document.createElement('div');
@@ -450,13 +437,8 @@ const USER_LOCALE_TEXT = (() => {
         const titleText = document.createElement('div');
         titleText.textContent = "YT PREMIUM ULTRA";
         titleText.style.cssText = `
-            color: #ffffff;
-            font-size: clamp(16px, 2.5vw, 24px);
-            font-weight: 900;
-            letter-spacing: 4px;
-            margin-top: 24px;
-            text-align: center;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            color: #ffffff; font-size: clamp(16px, 2.5vw, 24px); font-weight: 900;
+            letter-spacing: 4px; margin-top: 24px; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         `;
 
         const statusContainer = document.createElement('div');
@@ -469,16 +451,13 @@ const USER_LOCALE_TEXT = (() => {
         `;
 
         const statusText = document.createElement('div');
-       statusText.textContent = USER_LOCALE_TEXT; // Lấy trực tiếp hằng số đã lưu, tốc độ bàn thờ
-       statusText.style.cssText = `
-       color: rgba(255, 255, 255, 0.6);
-       font-size: clamp(11px, 1.5vw, 13px);
-       font-weight: 500;
-       `;
+        statusText.textContent = USER_LOCALE_TEXT;
+        statusText.style.cssText = `
+            color: rgba(255, 255, 255, 0.6); font-size: clamp(11px, 1.5vw, 13px); font-weight: 500;
+        `;
 
         statusContainer.appendChild(pulseDot);
         statusContainer.appendChild(statusText);
-
         centerContainer.appendChild(playButton);
         centerContainer.appendChild(titleText);
         centerContainer.appendChild(statusContainer);
@@ -490,20 +469,11 @@ const USER_LOCALE_TEXT = (() => {
             color: rgba(255, 255, 255, 0.3); font-size: clamp(9px, 1.2vw, 11px);
         `;
 
-        if (!document.getElementById("jungle-shield-styles")) {
-            const styleSheet = document.createElement("style");
-            styleSheet.id = "jungle-shield-styles";
-            styleSheet.textContent = `
-                @keyframes pulse-glow-red { 0% { transform: scale(1); box-shadow: 0 0 30px rgba(255,23,68,0.35); } 50% { transform: scale(1.05); box-shadow: 0 0 45px rgba(255,23,68,0.6); } 100% { transform: scale(1); box-shadow: 0 0 30px rgba(255,23,68,0.35); } }
-                @keyframes pulse-green { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,230,118,0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0,230,118,0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0,230,118,0); } }
-            `;
-            document.head.appendChild(styleSheet);
-        }
-
         logoShieldDiv.appendChild(centerContainer);
         logoShieldDiv.appendChild(footerText);
-        parent.appendChild(logoShieldDiv);
+        player.appendChild(logoShieldDiv);
 
+        // Resize observer
         shieldResizeObserver = new ResizeObserver(entries => {
             for (let entry of entries) {
                 const width = entry.contentRect.width;
@@ -511,46 +481,57 @@ const USER_LOCALE_TEXT = (() => {
                 logoShieldDiv.style.setProperty('--shield-scale', scale);
             }
         });
-        shieldResizeObserver.observe(parent);
+        shieldResizeObserver.observe(player);
 
-        return logoShieldDiv;
+        isShieldPreCreated = true;
     };
 
     const toggleLogoShield = (show) => {
-        const moviePlayer = document.getElementById('movie_player') || document.querySelector('.html5-video-player');
-        if (!moviePlayer) return;
-        const shield = createLogoShield(moviePlayer);
+        if (!logoShieldDiv) {
+            preCreateLogoShield();
+            if (!logoShieldDiv) return;
+        }
+
         if (show) {
-            shield.style.visibility = "visible";
-            shield.style.opacity = "1";
-            shield.style.pointerEvents = "auto";
+            logoShieldDiv.style.visibility = "visible";
+            logoShieldDiv.style.opacity = "1";
+            logoShieldDiv.style.pointerEvents = "auto";
         } else {
-            shield.style.opacity = "0";
-            shield.style.pointerEvents = "none";
+            logoShieldDiv.style.opacity = "0";
+            logoShieldDiv.style.pointerEvents = "none";
+            // Ẩn hoàn toàn sau transition để tối ưu
             setTimeout(() => {
-                if (shield.style.opacity === "0") shield.style.visibility = "hidden";
-            }, 250);
+                if (logoShieldDiv && logoShieldDiv.style.opacity === "0") {
+                    logoShieldDiv.style.visibility = "hidden";
+                }
+            }, 220);
         }
     };
-        // ==================== TUA GIA TỐC NGẦM ĐỘT PHÁ + HIỂN THỊ LOGO SHIELD ====================
+            // ==================== TUA GIA TỐC + HIỂN THỊ LOGO SHIELD TỨC THÌ ====================
     const executeVirtualAcceleration = (video) => {
       if (!video) return;
+
       const isAdShowing = document.querySelector('.ad-showing, .ad-interrupting, .ytp-ad-player-overlay');
-     
+
       if (!isAdShowing) {
         toggleLogoShield(false);
         return;
       }
-      // Kích hoạt màn che logo
+
+      // Tạo shield ngay nếu chưa có
+      if (!isShieldPreCreated) preCreateLogoShield();
+
       toggleLogoShield(true);
 
       if (!video.muted) video.muted = true;
       video.volume = 0;
+
       if (isFinite(video.duration) && video.duration > 0) {
         video.currentTime = video.duration;
       } else {
         video.playbackRate = 16;
       }
+
       document.querySelectorAll('.ytp-ad-skip-button, .ytp-skip-ad-button, .ytp-ad-skip-button-modern, button[aria-label*="Skip"], button[aria-label*="Bỏ qua"]').forEach(btn => {
         btn.click();
         btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -766,7 +747,8 @@ const USER_LOCALE_TEXT = (() => {
     const initObserver = () => {
       const player = document.getElementById('movie_player');
       const video = document.querySelector('.html5-main-video');
-
+      // TẠO SHIELD SỚM NHẤT CÓ THỂ
+      if (player) preCreateLogoShield();
       if (!player || !video) {
         setTimeout(initObserver, 150);
         return;
