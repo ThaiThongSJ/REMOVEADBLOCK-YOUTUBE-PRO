@@ -690,7 +690,7 @@ const USER_LOCALE_TEXT = (() => {
           }
         }
       } catch (e) {
-        console.log('[Jungle Diamond Nonstop Error]: ', e);
+                // console.log('[Jungle Diamond Nonstop Error]: ', e); // Tắt để tránh spam
       } finally {
         isHandlingNonstop = false;
       }
