@@ -90,21 +90,23 @@ const USER_LOCALE_TEXT = (() => {
 
     // ==================== ANTI-BANNER & ENFORCEMENT CSS ====================
     const injectCSS = () => {
-      const css = `
+        if (document.getElementById('pure-ad-shield')) return; // Chống trùng lặp element CSS
+        const css = `
             square-image-layout-view-model, ad-image-view-model,
             feed-ad-metadata-view-model, ad-button-view-model,
-            ytd-ad-slot-renderer, ytm-promoted-sparkles-web-renderer,
+            ytd-ad-slot-renderer, ytm-ad-slot, ytm-promoted-sparkles-web-renderer,
             .ytwSquareImageLayoutViewModelHost, .ytp-ad-module, .ytp-ad-overlay-container,
             #player-ads, ytd-enforcement-message-view-model,
             tp-yt-paper-dialog:has(ytd-enforcement-message-view-model),
-            .yt-playability-error-supported-renderers,
+            tp-yt-paper-dialog, .yt-playability-error-supported-renderers,
             ytd-engagement-panel-title-header-renderer > #banner,
             #ads-info-button.style-scope.ytd-engagement-panel-title-header-renderer,
             ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"],
+            [target-id="engagement-panel-ads"],
             ytd-engagement-panel-section-list-renderer:has(panel-ad-header-image-lockup-view-model),
-            panel-ad-header-image-lockup-view-model,
-            ad-avatar-lockup-view-model,
-            ad-image-view-model.ytwAdImageViewModelHostIsClickableAdComponent {
+            panel-ad-header-image-lockup-view-model, ad-avatar-lockup-view-model,
+            ad-image-view-model.ytwAdImageViewModelHostIsClickableAdComponent,
+            .companion-ad-container, .ytm-open-app-button, .compact-app-bar, ytm-statement-banner-renderer {
                 display: none !important;
                 visibility: hidden !important;
                 opacity: 0 !important;
@@ -114,16 +116,20 @@ const USER_LOCALE_TEXT = (() => {
                 padding: 0 !important;
                 pointer-events: none !important;
             }
+            
+            /* TÁCH RIÊNG: Không ẩn display của .ad-showing nữa để giữ chỗ cho Khiên hiển thị lập tức */
+            .ad-showing video, .ad-interrupting video {
+                opacity: 0 !important; /* Chỉ làm ẩn luồng video quảng cáo bên dưới */
+            }
         `;
-      const style = document.createElement('style');
-      style.textContent = css;
-      (document.head || document.documentElement).appendChild(style);
+        const style = document.createElement('style');
+        style.id = 'pure-ad-shield';
+        style.textContent = css;
+        (document.head || document.documentElement).appendChild(style);
     };
 
     injectCSS();
-    window.addEventListener('load', injectCSS, {
-      once: true
-    });
+    window.addEventListener('load', injectCSS, { once: true });
 
     // ==================== GIÁM SÁT THAO TÁC PHẦN CỨNG BẢO VỆ STREAM ====================
     const registerHardwareTracker = () => {
